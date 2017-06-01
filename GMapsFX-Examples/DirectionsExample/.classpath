@@ -28,5 +28,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/GMapsFX"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/google-maps-services-java"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -80,6 +80,7 @@ public class DirectionsRequest extends JavascriptObject{
             //unit system
             DirectionsWaypoint[] waypoints){
         super(GMapObjectType.DIRECTIONS_REQUESTS, convertToJavascriptString(addressOrigin, latLongOrigin, addressDestination, latLongDestination, travelmode, drivingOptions, waypoints));
+        //System.out.println("DirectionsRequest: " + convertToJavascriptString(addressOrigin, latLongOrigin, addressDestination, latLongDestination, travelmode, drivingOptions, waypoints));
     }
     
     private static String convertToJavascriptString(String addressOrigin, LatLong latLongOrigin, 

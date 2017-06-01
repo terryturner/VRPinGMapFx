@@ -1,12 +1,23 @@
 package com.lynden.example.directions;
 
 
+import com.google.maps.DistanceMatrixApi;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.DistanceMatrixElement;
+import com.google.maps.model.GeocodingResult;
 import com.lynden.gmapsfx.GoogleMapView;
 import com.lynden.gmapsfx.MapComponentInitializedListener;
 import com.lynden.gmapsfx.javascript.object.*;
 import com.lynden.gmapsfx.service.directions.*;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -46,7 +57,46 @@ public class DirectionsFXMLController implements Initializable, MapComponentInit
     
     @FXML
     private void testAction(ActionEvent event) {
+    	
     	mapView.setCenter(24.997861, 121.486786);
+        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyAs71blnhxTVQj72XuGTgzkTIv5AqtDOlE");
+//        context
+//        	.setConnectTimeout(1, TimeUnit.SECONDS)
+//        	.setReadTimeout(1, TimeUnit.SECONDS)
+//        	.setWriteTimeout(1, TimeUnit.SECONDS);
+
+        String[] origins = new String[]{
+                "沅聖科技股份有限公司", "萊爾富中和連勝店", "萊爾富中和力德店, 萊爾富北縣員山店",
+                "萊爾富北縣橋安店, 萊爾富北縣橋和二店"
+            };
+            String[] destinations = new String[]{
+            		"沅聖科技股份有限公司", "萊爾富中和連勝店", "萊爾富中和力德店, 萊爾富北縣員山店",
+                    "萊爾富北縣橋安店, 萊爾富北縣橋和二店"
+            };
+            try {
+				DistanceMatrix matrix =
+				    DistanceMatrixApi.getDistanceMatrix(context, origins, destinations).await();
+				
+				for (int i=0; i < matrix.originAddresses.length; i++) {
+					DistanceMatrixElement[] dm = matrix.rows[i].elements;
+					for (int j=0; j < dm.length; j++) {
+						System.out.println(String.format("%s to %s: %s", matrix.originAddresses[i], matrix.destinationAddresses[j], dm[j].duration.humanReadable));
+					}
+				}
+			} catch (ApiException | InterruptedException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+//        GeocodingResult[] results;
+//		try {
+//			results = GeocodingApi.geocode(context,
+//			        "1600 Amphitheatre Parkway Mountain View, CA 94043").await();
+//			System.out.println(results[0].formattedAddress);  
+//		} catch (ApiException | InterruptedException | IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//    	
     }
 
     @Override
