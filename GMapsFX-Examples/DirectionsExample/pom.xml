@@ -104,21 +104,35 @@
             <version>2.12.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
- 		<dependency>
-            <groupId>com.google.maps</groupId>
-            <artifactId>google-maps-services</artifactId>
-            <version>0.1.20</version>
-        </dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.google.maps/google-maps-services -->
+		<dependency>
+    		<groupId>com.google.maps</groupId>
+    		<artifactId>google-maps-services</artifactId>
+    		<version>0.1.20</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp-urlconnection -->
+		<dependency>
+    		<groupId>com.squareup.okhttp</groupId>
+    		<artifactId>okhttp</artifactId>
+    		<version>2.7.5</version>
+		</dependency>
+		
+
+		<!-- dependency>
+			<groupId>com.graphhopper</groupId>
+			<artifactId>jsprit</artifactId>
+			<version>1.7.2-SNAPSHOT</version>
+		</dependency-->
  		<dependency>
             <groupId>com.graphhopper</groupId>
             <artifactId>jsprit-core</artifactId>
-            <version>1.7-RC1</version>
+            <version>1.7.2-SNAPSHOT</version>
         </dependency>
 		<dependency>
     		<groupId>com.graphhopper</groupId>
     		<artifactId>jsprit-analysis</artifactId>
-    		<version>1.7-RC1</version>
+    		<version>1.7.2-SNAPSHOT</version>
 		</dependency>
     </dependencies>
 

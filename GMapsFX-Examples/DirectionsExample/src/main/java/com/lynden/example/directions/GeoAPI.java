@@ -11,7 +11,9 @@ import com.google.maps.model.DistanceMatrixElement;
 public class GeoAPI {
 	GeoApiContext context;
 	public GeoAPI() {
-        context = new GeoApiContext().setApiKey("AIzaSyAs71blnhxTVQj72XuGTgzkTIv5AqtDOlE");
+        //context = new GeoApiContext().setApiKey("AIzaSyAs71blnhxTVQj72XuGTgzkTIv5AqtDOlE");
+		context = new GeoApiContext();
+		context.setApiKey("AIzaSyAs71blnhxTVQj72XuGTgzkTIv5AqtDOlE");
 	}
 	
 	public void testDistanceMatrix() {

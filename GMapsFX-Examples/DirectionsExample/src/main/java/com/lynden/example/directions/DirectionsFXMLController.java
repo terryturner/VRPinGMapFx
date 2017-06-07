@@ -60,9 +60,10 @@ public class DirectionsFXMLController implements Initializable, MapComponentInit
     	
     	mapView.setCenter(24.997861, 121.486786);
     	GeoAPI api = new GeoAPI();
-    	//api.testDistanceMatrix();
+    	api.testDistanceMatrix();
     	jsprit algo = new jsprit();
-    	//algo.start();
+    	
+    	algo.start();
     }
 
     @Override
