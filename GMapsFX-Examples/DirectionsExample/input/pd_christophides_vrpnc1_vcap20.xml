@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to GraphHopper GmbH under one or more contributor
+  ~ license agreements. See the NOTICE file distributed with this work for
+  ~ additional information regarding copyright ownership.
+  ~
+  ~ GraphHopper GmbH licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<problem xmlns="http://www.w3schools.com"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3schools.com vrp_xml_schema.xsd">
+    <problemType>
+        <fleetSize>INFINITE</fleetSize>
+        <fleetComposition>HOMOGENEOUS</fleetComposition>
+    </problemType>
+    <vehicles>
+        <vehicle>
+            <id>christophidesVehicle</id>
+            <typeId>christophidesType</typeId>
+            <location>
+                <id>[x=30.0][y=40.0]</id>
+                <coord x="30.0" y="40.0"/>
+            </location>
+            <timeSchedule>
+                <start>0.0</start>
+                <end>999999.0</end>
+            </timeSchedule>
+        </vehicle>
+    </vehicles>
+    <vehicleTypes>
+        <type>
+            <id>christophidesType</id>
+            <capacity>1000</capacity>
+            <costs>
+                <fixed>0.0</fixed>
+                <distance>1.0</distance>
+                <time>0.0</time>
+            </costs>
+        </type>
+    </vehicleTypes>
+    <services>
+        <service id="35" type="delivery">
+            <locationId>[x=1.0][y=1.0]</locationId>
+            <coord x="1.0" y="1.0"/>
+            <capacity-demand>17</capacity-demand>
+            <duration>0.0</duration>
+            <timeWindows>
+                <timeWindow>
+                    <start>0.0</start>
+                    <end>1.7976931348623157E308</end>
+                </timeWindow>
+            </timeWindows>
+        </service>
+        <service id="36" type="pickup">
+            <locationId>[x=63.0][y=1.0]</locationId>
+            <coord x="63.0" y="1.0"/>
+            <capacity-demand>6</capacity-demand>
+            <duration>0.0</duration>
+            <timeWindows>
+                <timeWindow>
+                    <start>0.0</start>
+                    <end>1.7976931348623157E308</end>
+                </timeWindow>
+            </timeWindows>
+        </service>
+        <service id="33" type="pickup">
+            <locationId>[x=46.0][y=10.0]</locationId>
+            <coord x="46.0" y="10.0"/>
+            <capacity-demand>23</capacity-demand>
+            <duration>0.0</duration>
+            <timeWindows>
+                <timeWindow>
+                    <start>0.0</start>
+                    <end>1.7976931348623157E308</end>
+                </timeWindow>
+            </timeWindows>
+        </service>
+        <service id="34" type="pickup">
+            <locationId>[x=61.0][y=33.0]</locationId>
+            <coord x="61.0" y="33.0"/>
+            <capacity-demand>26</capacity-demand>
+            <duration>0.0</duration>
+            <timeWindows>
+                <timeWindow>
+                    <start>0.0</start>
+                    <end>1.7976931348623157E308</end>
+                </timeWindow>
+            </timeWindows>
+        </service>
+        <service id="39" type="pickup">
+            <locationId>[x=59.0][y=15.0]</locationId>
+            <coord x="59.0" y="15.0"/>
+            <capacity-demand>14</capacity-demand>
+            <duration>0.0</duration>
+            <timeWindows>
+                <timeWindow>
+                    <start>0.0</start>
+                    <end>1.7976931348623157E308</end>
+                </timeWindow>
+            </timeWindows>
+        </service>
+
+
+    </services>
+</problem>

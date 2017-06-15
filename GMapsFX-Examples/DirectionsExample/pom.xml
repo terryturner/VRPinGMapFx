@@ -131,7 +131,7 @@
         </dependency>
 		<dependency>
     		<groupId>com.graphhopper</groupId>
-    		<artifactId>jsprit-analysis</artifactId>
+    		<artifactId>jsprit-io</artifactId>
     		<version>1.7.2-SNAPSHOT</version>
 		</dependency>
     </dependencies>

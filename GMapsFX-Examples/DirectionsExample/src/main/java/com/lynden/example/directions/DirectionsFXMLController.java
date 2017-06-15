@@ -1,6 +1,10 @@
 package com.lynden.example.directions;
 
 
+import com.goldtek.algorithm.Depot;
+import com.goldtek.algorithm.IVrpSolver;
+import com.goldtek.algorithm.Route;
+import com.goldtek.jsprit.JspritSolver;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -15,6 +19,7 @@ import com.lynden.gmapsfx.service.directions.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
@@ -61,9 +66,22 @@ public class DirectionsFXMLController implements Initializable, MapComponentInit
     	mapView.setCenter(24.997861, 121.486786);
     	GeoAPI api = new GeoAPI();
     	api.testDistanceMatrix();
-    	jsprit algo = new jsprit();
-    	
-    	algo.start();
+    }
+    
+    @FXML
+    private void testSolver(ActionEvent event) {
+    	IVrpSolver solver = JspritSolver.getInstance();
+    	solver.reset();
+    	solver.inputFrom("input/zhonghe_test.xml");
+    	List<Route> routes = solver.solve(20);
+    	for (Route route : routes) {
+    		System.out.println("=== ROUTE ===");
+    		System.out.print("[ ");
+    		for (Depot depot : route.getDepots()) {
+    			System.out.print(depot.getLocationID() + " ");
+    		}
+    		System.out.println("]");
+    	}
     }
 
     @Override

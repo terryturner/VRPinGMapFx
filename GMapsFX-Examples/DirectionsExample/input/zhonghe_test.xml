@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to GraphHopper GmbH under one or more contributor
+  ~ license agreements. See the NOTICE file distributed with this work for
+  ~ additional information regarding copyright ownership.
+  ~
+  ~ GraphHopper GmbH licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<problem xmlns="http://www.w3schools.com"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3schools.com vrp_xml_schema.xsd">
+    <problemType>
+        <fleetSize>INFINITE</fleetSize>
+        <fleetComposition>HOMOGENEOUS</fleetComposition>
+    </problemType>
+    <vehicles>
+        <vehicle>
+            <id>Drive</id>
+            <typeId>March</typeId>
+            <location>
+                <id>1</id>
+                <coord y="24.997798" x="121.487799"/>
+            </location>
+			<timeSchedule>
+                <start>0.0</start>
+                <end>28800.0</end>
+            </timeSchedule>
+        </vehicle>
+    </vehicles>
+    <vehicleTypes>
+		<type>
+            <id>March</id>
+            <capacity>50</capacity>
+            <costs>
+				<fixed>200.0</fixed>
+                <distance>1000.0</distance>
+				<time>1.0</time>
+				<service>1.0</service>
+				<wait>1.0</wait>
+            </costs>
+        </type>
+        <type>
+            <id>Truck</id>
+            <capacity>1000</capacity>
+            <costs>
+				<fixed>1000.0</fixed>
+                <distance>1000.0</distance>
+				<time>1.0</time>
+				<service>1.0</service>
+				<wait>1.0</wait>
+            </costs>
+        </type>
+    </vehicleTypes>
+
+    <services>
+        <service id="2" type="delivery">
+            <locationId>2</locationId>
+            <coord y="24.999303" x="121.483803"/>
+            <capacity-demand>15</capacity-demand>
+			<duration>450.0</duration>
+			<name>萊爾富中和連勝店</name>
+        </service>
+		<service id="3" type="pickup">
+            <locationId>2</locationId>
+            <coord y="24.999303" x="121.483803"/>
+            <capacity-demand>8</capacity-demand>
+			<duration>240.0</duration>
+			<name>萊爾富中和連勝店</name>
+        </service>
+        <service id="4" type="delivery">
+            <locationId>3</locationId>
+            <coord y="25.000388" x="121.473042"/>
+            <capacity-demand>8</capacity-demand>
+			<duration>240.0</duration>
+			<name>美廉社中和民享店</name>
+        </service>
+        <service id="5" type="pickup">
+            <locationId>3</locationId>
+            <coord y="25.000388" x="121.473042"/>
+            <capacity-demand>15</capacity-demand>
+			<duration>450.0</duration>
+			<name>美廉社中和民享店</name>
+        </service>
+        <service id="6" type="delivery">
+            <locationId>4</locationId>
+            <coord y="24.996681" x="121.526277"/>
+            <capacity-demand>20</capacity-demand>
+			<duration>600.0</duration>
+			<name>美廉社中和秀朗店</name>
+        </service>
+		<service id="7" type="pickup">
+            <locationId>4</locationId>
+            <coord y="24.996681" x="121.526277"/>
+            <capacity-demand>15</capacity-demand>
+			<duration>450.0</duration>
+			<name>美廉社中和秀朗店</name>
+        </service>
+		<service id="8" type="delivery">
+            <locationId>5</locationId>
+            <coord y="24.995251" x="121.466008"/>
+            <capacity-demand>15</capacity-demand>
+			<duration>450.0</duration>
+			<name>美廉社中和壽德二店</name>
+        </service>
+		<service id="9" type="pickup">
+            <locationId>5</locationId>
+            <coord y="24.995251" x="121.466008"/>
+            <capacity-demand>20</capacity-demand>
+			<duration>600.0</duration>
+			<name>美廉社中和壽德二店</name>
+        </service>
+		<service id="10" type="delivery">
+            <locationId>6</locationId>
+            <coord y="24.984871" x="121.506858"/>
+            <capacity-demand>35</capacity-demand>
+			<duration>1050.0</duration>
+			<name>美廉社中和興南三店</name>
+        </service>
+		<service id="11" type="pickup">
+            <locationId>6</locationId>
+            <coord y="24.984871" x="121.506858"/>
+            <capacity-demand>20</capacity-demand>
+			<duration>600.0</duration>
+			<name>美廉社中和興南三店</name>
+        </service>
+		
+		<service id="12" type="delivery">
+            <locationId>7</locationId>
+            <coord y="24.982400" x="121.507509"/>
+            <capacity-demand>0</capacity-demand>
+			<duration>0.0</duration>
+			<name>美廉社中和華新店</name>
+        </service>
+		<service id="13" type="pickup">
+            <locationId>7</locationId>
+            <coord y="24.982400" x="121.507509"/>
+            <capacity-demand>5</capacity-demand>
+			<duration>450.0</duration>
+			<name>美廉社中和華新店</name>
+        </service>
+		<service id="14" type="delivery">
+            <locationId>8</locationId>
+            <coord y="25.003586" x="121.505911"/>
+            <capacity-demand>15</capacity-demand>
+			<duration>450.0</duration>
+			<name>萊爾富北縣水源店</name>
+        </service>
+		<service id="15" type="pickup">
+            <locationId>8</locationId>
+            <coord y="25.003586" x="121.505911"/>
+            <capacity-demand>5</capacity-demand>
+			<duration>150.0</duration>
+			<name>萊爾富北縣水源店</name>
+        </service>
+		<service id="16" type="delivery">
+            <locationId>9</locationId>
+            <coord y="24.993395" x="121.522217"/>
+            <capacity-demand>2</capacity-demand>
+			<duration>60.0</duration>
+			<name>萊爾富北縣和大店</name>
+        </service>
+        <service id="17" type="pickup">
+            <locationId>9</locationId>
+            <coord y="24.993395" x="121.522217"/>
+            <capacity-demand>9</capacity-demand>
+			<duration>240.0</duration>
+			<name>萊爾富北縣和大店</name>
+        </service>
+		<service id="18" type="delivery">
+            <locationId>10</locationId>
+            <coord y="25.006845" x="121.489769"/>
+            <capacity-demand>3</capacity-demand>
+			<duration>240.0</duration>
+			<name>萊爾富中和力德店</name>
+        </service>
+        <service id="19" type="pickup">
+            <locationId>10</locationId>
+            <coord y="25.006845" x="121.489769"/>
+            <capacity-demand>7</capacity-demand>
+			<duration>210.0</duration>
+			<name>萊爾富中和力德店</name>
+        </service>
+
+    </services>
+</problem>
