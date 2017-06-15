@@ -30,6 +30,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 //Peter---
 
 
@@ -46,23 +47,29 @@ public class DirectionsApiMainApp extends Application {
 //        Peter+++
 
     	Parent root = FXMLLoader.load(getClass().getResource("/com/lynden/example/directions/Scene.fxml"));
-        Scene scene = new Scene(root, 640, 480);
-        scene.setFill(Color.RED);
+        Scene scene = new Scene(root);
+//        stage.setFullScreen(true);
+        stage.setMaximized(true);  //set default is max windows.
+        stage.setResizable(false); //disable resize windows.
+        
+        scene.setFill(Color.BLACK);
         scene.getStylesheets().add("/styles/Styles.css");
 
         MenuBar menuBar = new MenuBar();
+        menuBar.prefWidthProperty().bind(stage.widthProperty()); //setup menu bar Fit to Parent width;
         
         // --- Menu File
         Menu menuFile = new Menu("File");
-        MenuItem exit = new MenuItem("Exit");
-        exit.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent t) {
-                System.exit(0);
-            }
-        });
         
-        menuFile.getItems().addAll(exit);
- 
+	        // --- Menu File __MenuItem exit        
+	        MenuItem exit = new MenuItem("Exit");
+	        exit.setOnAction(new EventHandler<ActionEvent>() {
+	            public void handle(ActionEvent t) {
+	                System.exit(0);
+	            }
+	        });
+	        menuFile.getItems().addAll(exit);
+	 
         // --- Menu Edit
         Menu menuEdit = new Menu("Edit");
  

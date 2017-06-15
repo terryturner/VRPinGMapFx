@@ -8,6 +8,7 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.DistanceMatrixElement;
 import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.GeocodedWaypointStatus;
 import com.lynden.gmapsfx.GoogleMapView;
 import com.lynden.gmapsfx.MapComponentInitializedListener;
 import com.lynden.gmapsfx.javascript.object.*;
@@ -19,6 +20,18 @@ import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 //peter+++
 import java.util.Arrays;
+//+++
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import com.google.maps.DirectionsApi.RouteRestriction;
+import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.DistanceMatrixElementStatus;
+import com.google.maps.model.TrafficModel;
+import com.google.maps.model.TravelMode;
+import com.google.maps.model.Unit;
+
+//---
 //peter---
 
 import javafx.beans.property.SimpleStringProperty;
@@ -63,14 +76,17 @@ public class DirectionsFXMLController implements Initializable, MapComponentInit
     @FXML
     private void testAction(ActionEvent event) {
     	
-    	mapView.setCenter(24.997861, 121.486786);
-        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI");
+//    	mapView.setCenter(24.997861, 121.486786);
+//        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI"); //Peter key
+//        GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyAs71blnhxTVQj72XuGTgzkTIv5AqtDOlE"); //Terry Key
 //        context
 //        	.setConnectTimeout(1, TimeUnit.SECONDS)
 //        	.setReadTimeout(1, TimeUnit.SECONDS)
-//        	.setWriteTimeout(1, TimeUnit.SECONDS);
+//        	.setWriteTimeout(1, TimeUnit.SECONDS)
+//        	.setRetryTimeout(1, TimeUnit.SECONDS)
+//        	.setQueryRateLimit(3);
 
-//        ++++++
+//        Peter++++++
 //        String[] origins = new String[]{
 //                "台中", "Goldtek"
 //            };
@@ -91,7 +107,7 @@ public class DirectionsFXMLController implements Initializable, MapComponentInit
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-//            -------
+//            Peter-------
             
 //        GeocodingResult[] results;
 //		try {
@@ -110,47 +126,64 @@ public class DirectionsFXMLController implements Initializable, MapComponentInit
             //-- DirectionRequest
             //++ DirectionsWatpoint
             //DirectionsWaypoint waypoint = new DirectionsWaypoint();
-	        String addressOrigin = "23.982196, 121.616099";
-	        String addressDestination = "南投";
+//	        String addressOrigin = "臺北小巨蛋";
+//	        String addressDestination = "老梅綠石槽";
         	String[] O = new String[]{
-        			addressOrigin,
-            		"阿里山", 
-            		"陽明山", 
-            		"積穗國小", 
-            		"日月潭國家風景區", 
-            		"合歡山",
-            		addressDestination
+            		"臺北松山機場", 
+            		"實踐大學 台北校區", 
+            		"V_K 美麗華店", 
+            		"士林官邸", 
+            		"國立故宮博物院",
+//            		"台北市立天文科學教育館", 
+//            		"芝山巖", 
+//            		"臺北榮民總醫院",
+//            		"天母棒球場",
+//            		"台灣國立陽明大學", 
+//            		"北投公園", 
+//            		"國防大學管理學院", 
+//            		"臺北市立復興高級中學", 
+//            		"地熱谷",
+//            		"皇池溫泉御膳館", 
+//            		"中國文化大學", 
+//            		"擎天崗大草原",
+//            		"陽明山國家公園遊客中心",
+//            		"金山財神廟",
+//            		"法鼓山世界佛教教育園區", 
+//            		"朱銘美術館", 
+//            		"北海高爾夫鄉村俱樂部",
+//            		"濱海高爾夫球場",
             		};
-            DirectionsWaypoint waypoint1 = new DirectionsWaypoint(O[1]);
-            DirectionsWaypoint waypoint2 = new DirectionsWaypoint(O[2]);
-            DirectionsWaypoint waypoint3 = new DirectionsWaypoint(O[3]);
-            DirectionsWaypoint waypoint4 = new DirectionsWaypoint(O[4]);
-            DirectionsWaypoint waypoint5 = new DirectionsWaypoint(O[5]);
-            DirectionsWaypoint[] test = { waypoint1, waypoint2, waypoint3, waypoint4, waypoint5};
-			DirectionsRequest request = new DirectionsRequest(addressOrigin, addressDestination, TravelModes.DRIVING, test);
-            directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
-            directionsService.getRoute(request, this, directionsRenderer); 
-            System.out.println("=============================");
-            try{
-            DistanceMatrix matrix =
- 				   DistanceMatrixApi.getDistanceMatrix(context, O, O).await();
+        drawdirections("臺北小巨蛋", "老梅綠石槽", O); //drawdirections(String start, String end, String[] waypoints)
+        getduration(O); //getduration(String[] waypoints)
+
+
+//            DirectionsWaypoint[] waypointarray = new DirectionsWaypoint[O.length];
+//            for(int i=0; i < O.length; i++){
+//            	waypointarray[i] =  new DirectionsWaypoint(O[i]);
+//            }
             
-            for (int i=0; i < O.length; i++) {
-				DistanceMatrixElement[] dm = matrix.rows[i].elements;
-				int j=i+1;
-				System.out.println("j="+j);
-				if(j>=O.length){
-					j=0;
-					System.out.println("if="+j);
-				};
-//				for (int j=0; j < dm.length; j++) {
-				System.out.println(String.format("%s to %s: %s --- %s", matrix.originAddresses[i], matrix.destinationAddresses[j], dm[j].duration.humanReadable, dm[j].distance.humanReadable));
-//				}			
-				}
-            } catch (ApiException | InterruptedException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}           
+//            DirectionsWaypoint[] test = { waypoint1, waypoint2, waypoint3, waypoint4, waypoint5, 
+//            		 waypoint6, waypoint7, waypoint8
+//            		};
+
+//			DirectionsRequest request = new DirectionsRequest(addressOrigin, addressDestination, TravelModes.DRIVING, waypointarray);
+//            directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
+//            directionsService.getRoute(request, this, directionsRenderer); 
+//            System.out.println("=============================");
+//        	try {
+//				DistanceMatrix matrix =
+//				   DistanceMatrixApi.getDistanceMatrix(context, O, O).await();
+//				
+//				for (int i=0; i < matrix.originAddresses.length; i++) {
+//					DistanceMatrixElement[] dm = matrix.rows[i].elements;
+//					for (int j=0; j < dm.length; j++) {
+//						System.out.println(String.format("%s ===TO=== %s => %s --- %s", matrix.originAddresses[i], matrix.destinationAddresses[j], dm[j].duration.humanReadable, dm[j].distance.humanReadable));
+//					}
+//				}
+//			} catch (ApiException | InterruptedException | IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} 
             //Peter-- DirectionsWatpoint
             
     }
@@ -175,15 +208,49 @@ public class DirectionsFXMLController implements Initializable, MapComponentInit
         MapOptions options = new MapOptions();
 
         options.center(new LatLong(24.997861, 121.486786))
-                .zoomControl(false)
+                .zoomControl(true)
                 .zoom(16)
-                .overviewMapControl(false)
-                .defaultUIControl(false)
+                .overviewMapControl(true)
+                .streetViewControl(true)
                 .draggableControl(true)
                 .mapType(MapTypeIdEnum.ROADMAP);
         GoogleMap map = mapView.createMap(options);
         directionsService = new DirectionsService();
         directionsPane = mapView.getDirec();
     }
+    
 
+    public void drawdirections(String start, String end, String[] waypoints){
+    	
+        DirectionsWaypoint[] waypointarray = new DirectionsWaypoint[waypoints.length];
+        
+        for(int i=0; i < waypoints.length; i++){
+        	waypointarray[i] =  new DirectionsWaypoint(waypoints[i]);
+        }        
+
+		DirectionsRequest request = new DirectionsRequest(start, end, TravelModes.DRIVING, waypointarray);
+        directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
+        directionsService.getRoute(request, this, directionsRenderer);
+    }
+    
+    
+    public void getduration(String[] waypoints){
+    	GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI");
+    	try {
+			DistanceMatrix matrix =
+			   DistanceMatrixApi.getDistanceMatrix(context, waypoints, waypoints).await();
+			
+			for (int i=0; i < matrix.originAddresses.length; i++) {
+				DistanceMatrixElement[] dm = matrix.rows[i].elements;
+				for (int j=0; j < dm.length; j++) {
+					System.out.println(String.format("%s ===TO=== %s => %s --- %s", matrix.originAddresses[i], matrix.destinationAddresses[j], dm[j].duration.humanReadable, dm[j].distance.humanReadable));
+				}
+			}
+		} catch (ApiException | InterruptedException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+    }
+    
+    
 }
