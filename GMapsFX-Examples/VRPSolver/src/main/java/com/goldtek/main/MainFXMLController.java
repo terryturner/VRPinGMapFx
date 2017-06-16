@@ -1,6 +1,10 @@
 package com.goldtek.main;
 
 
+import com.goldtek.algorithm.Depot;
+import com.goldtek.algorithm.IVrpSolver;
+import com.goldtek.algorithm.Route;
+import com.goldtek.jsprit.JspritSolver;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -16,6 +20,7 @@ import com.lynden.gmapsfx.service.directions.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
@@ -53,7 +58,21 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     
     @FXML
     private void testAction(ActionEvent event) {
-        //drawdirections("臺北小巨蛋", "老梅綠石槽", O); //drawdirections(String start, String end, String[] waypoints)
+    	IVrpSolver solver = JspritSolver.getInstance();
+    	solver.reset();
+    	solver.inputFrom("input/zhonghe_test.xml");
+    	List<Route> routes = solver.solve(20);
+    	
+    	for (Route route : routes) {
+    		System.out.println("=== ROUTE ===");
+    		System.out.print("[ ");
+    		for (Depot depot : route.getDepots()) {
+    			System.out.print(depot.getLocationID() + " ");
+    		}
+    		System.out.println("]");
+    		drawDriections(solver.getCenter(), solver.getCenter(), route);
+    	}
+    	
         //getduration(O); //getduration(String[] waypoints)
     }
 
@@ -81,21 +100,23 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
         directionsPane = mapView.getDirec();
     }
     
+    public void drawDriections(Depot start, Depot end, Route route) {
+    	DirectionsRequest request = null;
+    	DirectionsWaypoint[] wayPoints = null;
+		if (route != null) {
+			wayPoints = new DirectionsWaypoint[route.getDepots().size()];
+			for (int idx = 0; idx < route.getDepots().size(); idx++) {
+				wayPoints[idx] = new DirectionsWaypoint(route.getDepots().get(idx).toLatLongString());
+			}
+			
+			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING, wayPoints);
+		} else {
+			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
+		}
 
-    public void drawdirections(String start, String end, String[] waypoints){
-    	
-        DirectionsWaypoint[] waypointarray = new DirectionsWaypoint[waypoints.length];
-        
-        for(int i=0; i < waypoints.length; i++){
-        	waypointarray[i] =  new DirectionsWaypoint(waypoints[i]);
-        }        
-
-		DirectionsRequest request = new DirectionsRequest(start, end, TravelModes.DRIVING, waypointarray);
-        directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
+		directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
         directionsService.getRoute(request, this, directionsRenderer);
     }
-    
-    
     public void getduration(String[] waypoints){
     	GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI");
     	try {

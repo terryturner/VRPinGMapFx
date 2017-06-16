@@ -60,7 +60,7 @@ public class MainApp extends Application {
 
         
         
-        stage.setTitle("Directions API Example");
+        stage.setTitle("Goldtek VRP Solver");
         stage.setScene(scene);
         stage.show();
     }
