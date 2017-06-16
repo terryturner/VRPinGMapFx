@@ -1,3 +1,36 @@
 .button {
     -fx-font-weight: bold;
 }
+
+#AnchorPane {
+	#-fx-background-color: #A3CDFF;
+}
+.menu-bar {
+    #-fx-background-color: #F0F0F0(#1d1d1d,90%);
+}
+
+.menu-bar .label {
+	#-fx-background-color: #A3CDFF;
+    -fx-font-size: 12pt;
+    -fx-font-weight: bolder;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: black;
+    -fx-opacity: 1;
+}
+
+.menu-bar .label:hover {
+	-fx-text-fill: red;
+}
+
+
+.menu-item .label {
+     #-fx-background-color: #A3CDFF;
+     -fx-text-fill: black;
+     -fx-font-size: 10pt;
+    -fx-font-weight: bolder;
+    -fx-font-family: "Arial Black";
+}
+
+.menu-item:focused .label  {
+    -fx-text-fill: red;
+}

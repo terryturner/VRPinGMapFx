@@ -123,9 +123,11 @@ public class DirectionsRequest extends JavascriptObject{
             something = true;
         }
         if(waypoints != null){
+//        	Peter+++ optimize route
             builder.append(something ? "," : "");
             builder.append("optimizeWaypoints: ");
-            builder.append(opt);
+            builder.append("false");
+//        	Peter---
             builder.append(",");
             builder.append("waypoints: [");
             for(DirectionsWaypoint w : waypoints){

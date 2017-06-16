@@ -28,8 +28,12 @@
 		
 		<!--<script src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script>-->
         <!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>-->
-		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-        <script language='javascript'>
+		<!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
+	
+		<script async defer
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI&callback=initMap">
+		</script>
+		<script language='javascript'>
 			
 			function loadMapLibrary(ver, key, lang, region) {
 				//alert('loadMapLibrary');
@@ -49,7 +53,7 @@
 					ver = '3.exp';
 				}
 				
-				google.load('maps', ver, { 'other_params' : sOpts, 'callback': 'initMap()' });
+				//google.load('maps', ver, { 'other_params' : sOpts, 'callback': 'initMap()' });
 				//alert('loadMapLibrary done');
 			}
 			
