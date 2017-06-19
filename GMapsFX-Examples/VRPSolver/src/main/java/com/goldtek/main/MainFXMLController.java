@@ -5,6 +5,8 @@ import com.goldtek.algorithm.Depot;
 import com.goldtek.algorithm.IVrpSolver;
 import com.goldtek.algorithm.Route;
 import com.goldtek.jsprit.JspritSolver;
+import com.goldtek.main.routeguide.GuideCell;
+import com.goldtek.main.routeguide.IDragGuide;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -20,6 +22,7 @@ import com.lynden.gmapsfx.service.directions.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -27,33 +30,53 @@ import java.util.concurrent.TimeUnit;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 
-public class MainFXMLController implements Initializable, MapComponentInitializedListener, DirectionsServiceCallback {
+public class MainFXMLController implements Initializable, MapComponentInitializedListener, DirectionsServiceCallback, IDragGuide {
 
-    	protected DirectionsService directionsService;
+    protected DirectionsService directionsService;
     protected DirectionsPane directionsPane;
 
     protected StringProperty from = new SimpleStringProperty();
     protected StringProperty to = new SimpleStringProperty();
-    protected DirectionsRenderer directionsRenderer = null;
+    protected List<DirectionsRenderer> directionsRenderers = new ArrayList<>();
 
+    protected ObservableList<Depot> depots;
+    protected ObservableList<Image> depotImages;
+    protected Depot mDragDepot = null;
+    
+    @FXML
+    protected ListView<Depot> RouteGuide;
+    
     @FXML
     protected GoogleMapView mapView;
     
     @FXML
-    private void toTextFieldAction(ActionEvent event) {
-        DirectionsRequest request = new DirectionsRequest(from.get(), to.get(), TravelModes.DRIVING);
-        directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
-        directionsService.getRoute(request, this, directionsRenderer);
+    private void handleMenu(ActionEvent event) {
+    	MenuItem item = ((MenuItem)event.getSource());
+    	switch (item.getId()) {
+		case "MenuExit":
+			System.exit(0);
+			break;
+		default:
+			break;
+		}
     }
     
     @FXML
     private void clearDirections(ActionEvent event) {
-        directionsRenderer.clearDirections();
+    	for (DirectionsRenderer render : directionsRenderers)
+    		render.clearDirections();
+    	directionsRenderers.clear();
     }
     
     @FXML
@@ -73,8 +96,22 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     		drawDriections(solver.getCenter(), solver.getCenter(), route);
     	}
     	
-        //getduration(O); //getduration(String[] waypoints)
+    	if (routes.size() == 1) {
+    		depots = FXCollections.observableArrayList();
+    		depotImages = FXCollections.observableArrayList();
+    				
+    		depots.add(solver.getCenter());
+    		for (Depot depot : routes.get(0).getDepots()) depots.add(depot);
+    		depots.add(solver.getCenter());	
+    		
+    		depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
+    		//if (depots == null) System.out.println("null depots");
+    		RouteGuide.setItems(depots);
+    		RouteGuide.setCellFactory(param -> new GuideCell(MainFXMLController.this));
+    	}
+
     }
+
 
     @Override
     public void directionsReceived(DirectionsResult results, DirectionStatus status) {}
@@ -114,9 +151,11 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
 		}
 
-		directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
+		DirectionsRenderer directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
         directionsService.getRoute(request, this, directionsRenderer);
+        directionsRenderers.add(directionsRenderer);
     }
+
     public void getduration(String[] waypoints){
     	GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI");
     	try {
@@ -134,6 +173,26 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 			e.printStackTrace();
 		} 
     }
+
+	@Override
+	public Image getImage(int index) {
+		return depotImages.get(index);
+	}
+
+	@Override
+	public void setImage(int index, Image image) {
+		depotImages.set(index, image);
+	}
+
+	@Override
+	public void OnDragDetected(Depot item) {
+		mDragDepot = item;
+	}
+
+	@Override
+	public Depot getDragItem() {
+		return mDragDepot;
+	}
     
     
 }

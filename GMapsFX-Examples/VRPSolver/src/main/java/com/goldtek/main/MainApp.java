@@ -19,46 +19,15 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-    	Parent root = FXMLLoader.load(getClass().getResource("/com/goldtek/main/Scene.fxml"));
+    	Parent root = FXMLLoader.load(getClass().getResource("/com/goldtek/main/Scene2.fxml"));
         Scene scene = new Scene(root);
         stage.setFullScreen(false);
-        stage.setMaximized(true);  //set default is max windows.
+        stage.setMaximized(false);  //set default is max windows.
         stage.setResizable(false); //disable resize windows.
         
         scene.setFill(Color.BLACK);
         scene.getStylesheets().add("/styles/Styles.css");
 
-        MenuBar menuBar = new MenuBar();
-        menuBar.prefWidthProperty().bind(stage.widthProperty()); //setup menu bar Fit to Parent width;
-        
-        // --- Menu File
-        Menu menuFile = new Menu("File");
-        
-	        // --- Menu File __MenuItem exit        
-	        MenuItem exit = new MenuItem("Exit");
-	        exit.setOnAction(new EventHandler<ActionEvent>() {
-	            public void handle(ActionEvent t) {
-	                System.exit(0);
-	            }
-	        });
-	        menuFile.getItems().addAll(exit);
-	 
-        // --- Menu Edit
-        Menu menuEdit = new Menu("Edit");
- 
-        // --- Menu View
-        Menu menuView = new Menu("View");
- 
-        menuBar.getMenus().addAll(menuFile, menuEdit, menuView);
-        
-        
-        if (scene.getRoot() instanceof VBox) {
-            ((VBox) scene.getRoot()).getChildren().addAll(menuBar);            	
-        } else if (scene.getRoot() instanceof AnchorPane) {
-            ((AnchorPane) scene.getRoot()).getChildren().addAll(menuBar);        	
-        }
-
-        
         
         stage.setTitle("Goldtek VRP Solver");
         stage.setScene(scene);

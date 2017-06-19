@@ -53,7 +53,7 @@ public class DirectionsService extends JavascriptObject{
                 .append(getVariableName())
                 .append(".processResponse(results, status);\n}")
                 .append("});");
-        System.out.println("direct call: " + r.toString());
+        //System.out.println("direct call: " + r.toString());
         LOG.trace("Directions direct call: " + r.toString());
         try{
             getJSObject().eval(r.toString());
