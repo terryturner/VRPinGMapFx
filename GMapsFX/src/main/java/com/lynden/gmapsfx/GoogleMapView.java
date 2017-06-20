@@ -211,13 +211,20 @@ public class GoogleMapView extends AnchorPane {
                         new ChangeListener<Worker.State>() {
                     public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
                         if (newState == Worker.State.SUCCEEDED) {
-                            initialiseScript();
+                            //System.out.println("url: " + webengine.getLocation());
+                            if (webengine.getLocation().contains("VRPinGMapFx")) {
+                            	initialiseScript();
+                            } else {
+                            	System.exit(0);
+                            }
+
+                            
                             //setInitialized(true);
                             //fireMapInitializedListeners();
-
                         }
                     }
                 });
+                
                 webengine.load(getClass().getResource(htmlFile).toExternalForm());
             } finally {
                 latch.countDown();

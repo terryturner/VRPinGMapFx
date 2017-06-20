@@ -28,7 +28,7 @@ public class GuideCell extends ListCell<Depot> {
 
     public GuideCell(IDragGuide handler) {
     	dragHandler = handler;
-        ListCell thisCell = this;
+        ListCell<Depot> thisCell = this;
 
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         setAlignment(Pos.CENTER);
@@ -136,7 +136,7 @@ public class GuideCell extends ListCell<Depot> {
         label.setStyle("-fx-background-color: white; -fx-text-fill:black;");
         label.setWrapText(true);
         Scene scene = new Scene(new Group(label));
-        WritableImage img = new WritableImage(125, 125) ;
+        WritableImage img = new WritableImage(125, 40) ;
         scene.snapshot(img);
         return img ;
     }

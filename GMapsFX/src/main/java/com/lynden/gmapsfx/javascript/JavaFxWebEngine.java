@@ -68,6 +68,10 @@ public class JavaFxWebEngine implements IWebEngine {
     public void loadContent(String content) {
         webEngine.loadContent(content);
     }
+    
+    public String getLocation() {
+    	return webEngine.getLocation();
+    }
 
     public void setOnAlert(EventHandler<WebEvent<String>> eventHandler) {
         webEngine.setOnAlert(eventHandler);

@@ -86,6 +86,10 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     	solver.inputFrom("input/zhonghe_test.xml");
     	List<Route> routes = solver.solve(20);
     	
+    	
+    	String[] colors= { "#438391", "#62a3cf", "#333366", "#770f5d", "#ffe246", "#9e379f", "#01aebf" };
+    	
+    	int index = 0;
     	for (Route route : routes) {
     		System.out.println("=== ROUTE ===");
     		System.out.print("[ ");
@@ -93,7 +97,10 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     			System.out.print(depot.getLocationID() + " ");
     		}
     		System.out.println("]");
-    		drawDriections(solver.getCenter(), solver.getCenter(), route);
+    		
+    		drawDriections(solver.getCenter(), solver.getCenter(), route, colors[index]);
+    		index++;
+    		if (index > colors.length) index = 0;
     	}
     	
     	if (routes.size() == 1) {
@@ -130,14 +137,13 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
                 .zoom(16)
                 .overviewMapControl(true)
                 .streetViewControl(true)
-                .draggableControl(true)
                 .mapType(MapTypeIdEnum.ROADMAP);
-        GoogleMap map = mapView.createMap(options);
+        mapView.createMap(options);
         directionsService = new DirectionsService();
         directionsPane = mapView.getDirec();
     }
     
-    public void drawDriections(Depot start, Depot end, Route route) {
+    public void drawDriections(Depot start, Depot end, Route route, String color) {
     	DirectionsRequest request = null;
     	DirectionsWaypoint[] wayPoints = null;
 		if (route != null) {
@@ -151,9 +157,12 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
 		}
 
-		DirectionsRenderer directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
+		DirectionsRenderer directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane, color);
         directionsService.getRoute(request, this, directionsRenderer);
         directionsRenderers.add(directionsRenderer);
+
+        mapView.setCenter(24.997861, 121.486786);
+        mapView.getMap().clearMarkers();
     }
 
     public void getduration(String[] waypoints){
