@@ -123,6 +123,7 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     @Override
     public void directionsReceived(DirectionsResult results, DirectionStatus status) {}
 
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         mapView.addMapInializedListener(this);
@@ -134,6 +135,7 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 
         options.center(new LatLong(24.997861, 121.486786))
                 .zoomControl(true)
+                .mapTypeControl(false)
                 .zoom(16)
                 .overviewMapControl(true)
                 .streetViewControl(true)
@@ -145,24 +147,40 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     
     public void drawDriections(Depot start, Depot end, Route route, String color) {
     	DirectionsRequest request = null;
-    	DirectionsWaypoint[] wayPoints = null;
+    	DirectionsWaypoint[] wayPoints = null; 
+    	MarkerOptions markerOptions = new MarkerOptions();
+    	String label[] = {"A11", "A22", "A33", "A44", "A55", "A66", "A77", "A88", "A99"};
+    	int labelIndex = 0;
 		if (route != null) {
 			wayPoints = new DirectionsWaypoint[route.getDepots().size()];
 			for (int idx = 0; idx < route.getDepots().size(); idx++) {
 				wayPoints[idx] = new DirectionsWaypoint(route.getDepots().get(idx).toLatLongString());
-			}
-			
+
+				 //Add are waypoint markers on the map+++
+				    markerOptions.position( new LatLong(route.getDepots().get(idx).getLatitude(), route.getDepots().get(idx).getLongitude()) )
+				    			.label(label[labelIndex++ % label.length]);
+				    Marker marker = new Marker( markerOptions );
+
+				    mapView.getMap().addMarker(marker);	
+				  //Add are waypoint markers on the map---
+			}			
 			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING, wayPoints);
 		} else {
 			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
 		}
-
-		DirectionsRenderer directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane, color);
+		
+		 //Add are Start & End markers on the map+++
+	    markerOptions.position( new LatLong(start.getLatitude(), start.getLongitude()) )
+	    			.label("中")
+	    			.icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
+	    Marker markerS = new Marker( markerOptions );
+	    mapView.getMap().addMarker(markerS);
+	    ////Add are Start & End markers on the map---
+	    
+		DirectionsRenderer directionsRenderer = new DirectionsRenderer(false, mapView.getMap(), directionsPane, color);
         directionsService.getRoute(request, this, directionsRenderer);
         directionsRenderers.add(directionsRenderer);
 
-        mapView.setCenter(24.997861, 121.486786);
-        mapView.getMap().clearMarkers();
     }
 
     public void getduration(String[] waypoints){
@@ -202,6 +220,5 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 	public Depot getDragItem() {
 		return mDragDepot;
 	}
-    
     
 }

@@ -45,6 +45,7 @@ public class DirectionsRenderer extends JavascriptObject{
         super(GMapObjectType.DIRECTIONS_DISPLAY);
         
         getJSObject().eval(getVariableName()+".setOptions({draggable:" +drag+"});");
+//        getJSObject().eval(getVariableName()+".setOptions({draggable:" +drag+", suppressMarkers:"+ true+"});");
         getJSObject().eval(getVariableName()+".setMap("+map.getVariableName()+");");
         getJSObject().eval(getVariableName()+".setPanel("+panel.getVariableName()+");");
     }
@@ -55,7 +56,8 @@ public class DirectionsRenderer extends JavascriptObject{
     public DirectionsRenderer(boolean drag, GoogleMap map, DirectionsPane panel, String strokeColor){
         super(GMapObjectType.DIRECTIONS_DISPLAY);
         
-        getJSObject().eval(getVariableName()+".setOptions({draggable:" +drag+", polylineOptions: { strokeColor: '"+strokeColor+"'}});");
+        getJSObject().eval(getVariableName()+".setOptions({draggable:" +drag+", suppressMarkers:"+ true+", polylineOptions: { strokeColor: '"+strokeColor+"'}});");
+//        getJSObject().eval(getVariableName()+".setOptions({draggable:" +drag+", polylineOptions: { strokeColor: '"+strokeColor+"'}});");
         getJSObject().eval(getVariableName()+".setMap("+map.getVariableName()+");");
         getJSObject().eval(getVariableName()+".setPanel("+panel.getVariableName()+");");
     }
