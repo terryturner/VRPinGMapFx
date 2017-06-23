@@ -53,32 +53,36 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     
     @FXML
     private void clearDirections(ActionEvent event) {
-        directionsRenderer.clearDirections();
+    	mapInitialized();
+//        directionsRenderer.clearDirections();
     }
     
     @FXML
-    private void testAction(ActionEvent event) {
-    	IVrpSolver solver = JspritSolver.getInstance();
-    	solver.reset();
-    	solver.inputFrom("input/zhonghe_test.xml");
-    	List<Route> routes = solver.solve(20);
-    	
-    	for (Route route : routes) {
-    		System.out.println("=== ROUTE ===");
-    		System.out.print("[ ");
-    		for (Depot depot : route.getDepots()) {
-    			System.out.print(depot.getLocationID() + " ");
-    		}
-    		System.out.println("]");
-    		drawDriections(solver.getCenter(), solver.getCenter(), route);
-    	}
-    	
-        //getduration(O); //getduration(String[] waypoints)
-    }
+	private void testAction(ActionEvent event) {
+		IVrpSolver solver = JspritSolver.getInstance();
+		solver.reset();
+		solver.inputFrom("input/zhonghe_test.xml");
+		List<Route> routes = solver.solve(20);
 
+		for (Route route : routes) {
+			System.out.println("=== ROUTE ===");
+			System.out.print("[ ");
+			for (Depot depot : route.getDepots()) {
+				System.out.print(depot.getLocationID() + " ");
+			}
+			drawDriections(solver.getCenter(), solver.getCenter(), route);
+			System.out.print("] ");
+		}
+		
+		
+
+		// getduration(O); //getduration(String[] waypoints)
+	}
+
+    
     @Override
-    public void directionsReceived(DirectionsResult results, DirectionStatus status) {}
-
+	public void directionsReceived(DirectionsResult results, DirectionStatus status) {}
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         mapView.addMapInializedListener(this);
@@ -90,6 +94,7 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 
         options.center(new LatLong(24.997861, 121.486786))
                 .zoomControl(true)
+                .mapTypeControl(false)
                 .zoom(16)
                 .overviewMapControl(true)
                 .streetViewControl(true)
@@ -102,20 +107,39 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     
     public void drawDriections(Depot start, Depot end, Route route) {
     	DirectionsRequest request = null;
-    	DirectionsWaypoint[] wayPoints = null;
+    	DirectionsWaypoint[] wayPoints = null; 
+    	MarkerOptions markerOptions = new MarkerOptions();
+    	String label[] = {"A11", "A22", "A33", "A44", "A55", "A66", "A77", "A88", "A99"};
+    	int labelIndex = 0;
 		if (route != null) {
 			wayPoints = new DirectionsWaypoint[route.getDepots().size()];
 			for (int idx = 0; idx < route.getDepots().size(); idx++) {
 				wayPoints[idx] = new DirectionsWaypoint(route.getDepots().get(idx).toLatLongString());
-			}
-			
+
+				 //Add are waypoint markers on the map+++
+				    markerOptions.position( new LatLong(route.getDepots().get(idx).getLatitude(), route.getDepots().get(idx).getLongitude()) )
+				    			.label(label[labelIndex++ % label.length]);
+				    Marker marker = new Marker( markerOptions );
+
+				    mapView.getMap().addMarker(marker);	
+				  //Add are waypoint markers on the map---
+			}			
 			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING, wayPoints);
 		} else {
 			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
 		}
+		
+		 //Add are Start & End markers on the map+++
+	    markerOptions.position( new LatLong(start.getLatitude(), start.getLongitude()) )
+	    			.label("中")
+	    			.icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
+	    Marker markerS = new Marker( markerOptions );
 
-		directionsRenderer = new DirectionsRenderer(true, mapView.getMap(), directionsPane);
-        directionsService.getRoute(request, this, directionsRenderer);
+	    mapView.getMap().addMarker(markerS);
+	    ////Add are Start & End markers on the map---
+		
+		directionsRenderer = new DirectionsRenderer(false, mapView.getMap(), directionsPane);
+        directionsService.getRoute(request, this, directionsRenderer); 
     }
     public void getduration(String[] waypoints){
     	GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI");
@@ -134,6 +158,5 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 			e.printStackTrace();
 		} 
     }
-    
     
 }

@@ -4,13 +4,16 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.AnchorPane;
+
 
 
 
@@ -22,8 +25,11 @@ public class MainApp extends Application {
     	Parent root = FXMLLoader.load(getClass().getResource("/com/goldtek/main/Scene.fxml"));
         Scene scene = new Scene(root);
         stage.setFullScreen(false);
-        stage.setMaximized(true);  //set default is max windows.
-        stage.setResizable(false); //disable resize windows.
+//        stage.setMaximized(true);  //set default is max windows.
+        stage.setResizable(true); //disable resize windows.
+//        stage.initStyle(StageStyle.DECORATED);//default
+//        stage.initStyle(StageStyle.UTILITY); //set windows style
+
         
         scene.setFill(Color.BLACK);
         scene.getStylesheets().add("/styles/Styles.css");
