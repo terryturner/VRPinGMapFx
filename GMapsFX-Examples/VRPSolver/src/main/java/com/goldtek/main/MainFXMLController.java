@@ -4,6 +4,7 @@ package com.goldtek.main;
 import com.goldtek.algorithm.Depot;
 import com.goldtek.algorithm.IVrpSolver;
 import com.goldtek.algorithm.Route;
+import com.goldtek.greedy.GreedySolver;
 import com.goldtek.jsprit.JspritSolver;
 import com.goldtek.main.routeguide.GuideCell;
 import com.goldtek.main.routeguide.IDragGuide;
@@ -35,11 +36,17 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class MainFXMLController implements Initializable, MapComponentInitializedListener, DirectionsServiceCallback, IDragGuide {
 
@@ -53,12 +60,10 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     protected ObservableList<Depot> depots;
     protected ObservableList<Image> depotImages;
     protected Depot mDragDepot = null;
-    
-    @FXML
-    protected ListView<Depot> RouteGuide;
-    
-    @FXML
-    protected GoogleMapView mapView;
+
+    @FXML protected BorderPane RootPane;
+    @FXML protected GoogleMapView mapView;
+    @FXML protected ListView<Depot> RouteGuide;
     
     @FXML
     private void handleMenu(ActionEvent event) {
@@ -66,6 +71,16 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     	switch (item.getId()) {
 		case "MenuExit":
 			System.exit(0);
+			break;
+		case "MenuConfig":
+			final Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(mapView.getScene().getWindow());
+            VBox dialogVbox = new VBox(20);
+            dialogVbox.getChildren().add(new Text("This is a Dialog"));
+            Scene dialogScene = new Scene(dialogVbox, 300, 200);
+            dialog.setScene(dialogScene);
+            dialog.show();
 			break;
 		default:
 			break;
@@ -81,42 +96,14 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     
     @FXML
     private void testAction(ActionEvent event) {
-    	IVrpSolver solver = JspritSolver.getInstance();
+    	//IVrpSolver solver = JspritSolver.getInstance();
+    	IVrpSolver solver = GreedySolver.getInstance();
     	solver.reset();
     	solver.inputFrom("input/zhonghe_test.xml");
-    	List<Route> routes = solver.solve(20);
+    	//solver.inputFrom("input/goldtek_zhonghe.xml");
+    	List<Route> routes = solver.solve(200);
     	
-    	
-    	String[] colors= { "#438391", "#62a3cf", "#333366", "#770f5d", "#ffe246", "#9e379f", "#01aebf" };
-    	
-    	int index = 0;
-    	for (Route route : routes) {
-    		System.out.println("=== ROUTE ===");
-    		System.out.print("[ ");
-    		for (Depot depot : route.getDepots()) {
-    			System.out.print(depot.getLocationID() + " ");
-    		}
-    		System.out.println("]");
-    		
-    		drawDriections(solver.getCenter(), solver.getCenter(), route, colors[index]);
-    		index++;
-    		if (index > colors.length) index = 0;
-    	}
-    	
-    	if (routes.size() == 1) {
-    		depots = FXCollections.observableArrayList();
-    		depotImages = FXCollections.observableArrayList();
-    				
-    		depots.add(solver.getCenter());
-    		for (Depot depot : routes.get(0).getDepots()) depots.add(depot);
-    		depots.add(solver.getCenter());	
-    		
-    		depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
-    		//if (depots == null) System.out.println("null depots");
-    		RouteGuide.setItems(depots);
-    		RouteGuide.setCellFactory(param -> new GuideCell(MainFXMLController.this));
-    	}
-
+    	afterSolve(solver, routes);
     }
 
 
@@ -146,7 +133,7 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     public void drawDriections(Depot start, Depot end, Route route, String color) {
     	DirectionsRequest request = null;
     	DirectionsWaypoint[] wayPoints = null;
-		if (route != null) {
+		if (route != null && route.getDepots().size() > 0) {
 			wayPoints = new DirectionsWaypoint[route.getDepots().size()];
 			for (int idx = 0; idx < route.getDepots().size(); idx++) {
 				wayPoints[idx] = new DirectionsWaypoint(route.getDepots().get(idx).toLatLongString());
@@ -161,8 +148,6 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
         directionsService.getRoute(request, this, directionsRenderer);
         directionsRenderers.add(directionsRenderer);
 
-        mapView.setCenter(24.997861, 121.486786);
-        mapView.getMap().clearMarkers();
     }
 
     public void getduration(String[] waypoints){
@@ -203,5 +188,43 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 		return mDragDepot;
 	}
     
+	private void afterSolve(IVrpSolver solver, List<Route> routes) {
+		if (routes != null) {
+
+	    	String[] colors= { "#438391", "#62a3cf", "#333366", "#770f5d", "#ffe246", "#9e379f", "#01aebf" };
+	    	
+	    	int index = 0;
+	    	for (Route route : routes) {
+	    		System.out.println("=== ROUTE === ");
+	    		System.out.print("[ ");
+	    		for (Depot depot : route.getDepots()) {
+	    			System.out.print(depot.getLocationID() + " ");
+	    		}
+	    		System.out.println("]");
+	    		
+	    		drawDriections(solver.getCenter(), solver.getCenter(), route, colors[index]);
+	    		index++;
+	    		if (index > colors.length) index = 0;
+	    	}
+	    	
+	    	if (routes.size() >= 1) {
+	    		depots = FXCollections.observableArrayList();
+	    		depotImages = FXCollections.observableArrayList();
+
+	    		Depot start = solver.getCenter();
+	    		start.setNickName("First Car");
+	    		depots.add(start);
+	    		for (Depot depot : routes.get(0).getDepots()) depots.add(depot);
+	    		Depot end = solver.getCenter();
+	    		end.setNickName("Center");
+	    		depots.add(end);	
+	    		
+	    		depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
+	    		RouteGuide.setItems(depots);
+	    		RouteGuide.setCellFactory(param -> new GuideCell(MainFXMLController.this));
+	    	}
+
+		}
+	}
     
 }

@@ -27,18 +27,16 @@ import com.graphhopper.jsprit.core.util.VehicleRoutingTransportCostsMatrix;
 import com.graphhopper.jsprit.io.problem.VrpXMLReader;
 
 public class JspritSolver implements IVrpSolver {
-	VehicleRoutingProblem.Builder mVrpBuilder = VehicleRoutingProblem.Builder.newInstance();
-	VehicleRoutingProblem mVRP = null;
-
-	private static JspritSolver sInstance = new JspritSolver();
+	protected static IVrpSolver sInstance = null;
+	protected VehicleRoutingProblem.Builder mVrpBuilder = VehicleRoutingProblem.Builder.newInstance();
+	protected VehicleRoutingProblem mVRP = null;
 	
-	private JspritSolver() {}
+	protected JspritSolver() {}
 	
-	public static JspritSolver getInstance() {
+	public static IVrpSolver getInstance() {
 		if (sInstance == null) sInstance = new JspritSolver();
 		return sInstance;
 	}
-	
 	
 	public String debug() {
 		return "debug for ";
@@ -121,7 +119,7 @@ public class JspritSolver implements IVrpSolver {
 		Depot center = null;
 		if (mVrpBuilder.getAddedVehicles().size() > 0) {
 			Vehicle car = mVrpBuilder.getAddedVehicles().iterator().next();
-			center = new Depot(car.getStartLocation().getId(), car.getId(),
+			center = new Depot(true, car.getStartLocation().getId(), car.getId(),
 					car.getStartLocation().getCoordinate().getX(), car.getStartLocation().getCoordinate().getY());
 		}
 		return center;
@@ -139,7 +137,7 @@ public class JspritSolver implements IVrpSolver {
     	List<Route> showRoutes = new ArrayList<>();
     	for (VehicleRoute vehicleRoute : bestSolution.getRoutes()) {    		
     		Route showRoute = new Route();
-    		
+
     		for (TourActivity act : vehicleRoute.getActivities()) {
     			Depot depot = null;
     			

@@ -20,5 +20,5 @@ build/
 hs_err_pid*
 /GMapsFX/target/
 GMapsFX/nb-configuration.xml
-/GMapsFX-Examples/DirectionsExample/target
+/GMapsFX-Examples/VRPSolver/target
 /GMapsFX-Examples/LatLongExample/target
