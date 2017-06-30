@@ -7,9 +7,9 @@ import com.lynden.gmapsfx.javascript.object.GoogleMap;
 import com.lynden.gmapsfx.javascript.object.Marker;
 import com.lynden.gmapsfx.service.directions.DirectionsRenderer;
 
-public class GT_Line {
+public class GMapLine {
 
-	public GT_Line() {
+	public GMapLine() {
 	}
 
 	private List<Marker> Markers = new ArrayList<>();

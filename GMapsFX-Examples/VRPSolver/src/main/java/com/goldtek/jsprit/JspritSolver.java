@@ -134,9 +134,10 @@ public class JspritSolver implements IVrpSolver {
     	Collection<VehicleRoutingProblemSolution> solutions = algorithm.searchSolutions();
     	VehicleRoutingProblemSolution bestSolution = Solutions.bestOf(solutions);
 
+    	int index = 0;
     	List<Route> showRoutes = new ArrayList<>();
     	for (VehicleRoute vehicleRoute : bestSolution.getRoutes()) {    		
-    		Route showRoute = new Route();
+    		Route showRoute = new Route(index++);
 
     		for (TourActivity act : vehicleRoute.getActivities()) {
     			Depot depot = null;

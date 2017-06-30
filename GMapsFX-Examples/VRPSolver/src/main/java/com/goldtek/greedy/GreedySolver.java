@@ -53,8 +53,9 @@ public class GreedySolver extends JspritSolver {
             final int capacity = vehicle.getType().getCapacityDimensions().get(0);
 
             boolean isTransportable = true;
+            int index = 0;
             while (isTransportable) {
-                Route vehicleRoute = new Route();
+                Route vehicleRoute = new Route(index++);
                 int curDeliverAmount = capacity;
                 int curPickupAmount = 0;
                 
@@ -109,7 +110,7 @@ public class GreedySolver extends JspritSolver {
 
         mVrpBuilder.getAddedVehicles().forEach(vehicle -> {
             final int capacity = vehicle.getType().getCapacityDimensions().get(0);
-            Route vehicleRoute = new Route();
+            Route vehicleRoute = new Route(vehicle.getIndex());
             int curDeliverAmount = capacity;
             int curPickupAmount = 0;
 
@@ -209,9 +210,10 @@ public class GreedySolver extends JspritSolver {
             jobs.add(new ConsiderJob(job));
         }
 
+        int index = 0;
         for (Vehicle vehicle : mVrpBuilder.getAddedVehicles()) {
             final int capacity = vehicle.getType().getCapacityDimensions().get(0);
-            Route vehicleRoute = new Route();
+            Route vehicleRoute = new Route(index++);
             int curDeliverAmount = capacity;
             int curPickupAmount = 0;
             Location from = vehicle.getStartLocation();

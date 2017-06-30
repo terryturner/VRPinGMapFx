@@ -218,7 +218,7 @@ public class VehicleRoutingAlgorithm {
         logger.info("iterations start");
         for (int i = 0; i < maxIterations; i++) {
             iterationStarts(i + 1, problem, solutions);
-            logger.debug("start iteration: {}", i);
+            //logger.debug("start iteration: {}", i);
             counter.incCounter();
             SearchStrategy strategy = searchStrategyManager.getRandomStrategy();
             DiscoveredSolution discoveredSolution = strategy.run(problem, solutions);

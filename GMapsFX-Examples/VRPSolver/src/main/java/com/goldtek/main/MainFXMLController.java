@@ -4,10 +4,12 @@ import com.goldtek.algorithm.Depot;
 import com.goldtek.algorithm.IVrpSolver;
 import com.goldtek.algorithm.Route;
 import com.goldtek.greedy.GreedySolver;
-import com.goldtek.algorithm.GT_Line;
+import com.goldtek.algorithm.GMapLine;
 import com.goldtek.jsprit.JspritSolver;
 import com.goldtek.main.routeguide.GuideCell;
 import com.goldtek.main.routeguide.IDragGuide;
+import com.goldtek.main.routeguide.RouteColor;
+import com.goldtek.main.routeguide.RouteLabel;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -61,7 +63,7 @@ public class MainFXMLController
 	protected ObservableList<Depot> depots;
 	protected ObservableList<Image> depotImages;
 	protected Depot mDragDepot = null;
-	protected List<GT_Line> Any_Route_Marker = new ArrayList<>();
+	protected List<GMapLine> Any_Route_Marker = new ArrayList<>();
 	@FXML
 	protected ListView<Depot> RouteGuide;
 
@@ -92,7 +94,7 @@ public class MainFXMLController
 
 	@FXML
 	private void HideTotal(ActionEvent event) {
-		for (GT_Line lines : Any_Route_Marker) {
+		for (GMapLine lines : Any_Route_Marker) {
 			if (lines.getVisible() == true) {
 				DirectionsRenderer render = lines.getRoute();
 				render.clearDirections(); // hide lines
@@ -108,7 +110,7 @@ public class MainFXMLController
 
 	@FXML
 	private void ShowTotal(ActionEvent event) {
-		for (GT_Line lines : Any_Route_Marker) {
+		for (GMapLine lines : Any_Route_Marker) {
 			if (lines.getVisible() == false) {
 				DirectionsRenderer render = lines.getRoute();
 				render.setMap(mapView.getMap()); // show lines
@@ -226,7 +228,7 @@ public class MainFXMLController
 
 	private void clearALL() {
 		mapView.getMap().clearMarkers();
-		for (GT_Line lines : Any_Route_Marker) {
+		for (GMapLine lines : Any_Route_Marker) {
 			DirectionsRenderer render = lines.getRoute();
 			render.clearDirections();
 		}
@@ -238,33 +240,12 @@ public class MainFXMLController
 		clearALL();
 
 		IVrpSolver solver = JspritSolver.getInstance();
+		//IVrpSolver solver = GreedySolver.getInstance();
 		solver.reset();
 		solver.inputFrom("input/zhonghe_test.xml");
 		List<Route> routes = solver.solve(20);
 
-		String[] colors = { "#000000", "#FF0000", "#00FF00", "#0000FF", "#808000", "#FF00FF", "#008000" };
-		int colorsindex = 0;
-		for (Route route : routes) {
-			drawDriections(solver.getCenter(), solver.getCenter(), route, colors[colorsindex], routes.indexOf(route));
-			colorsindex++;
-			if (colorsindex > colors.length)
-				colorsindex = 0;
-		}
-
-		if (routes.size() == 1) {
-			depots = FXCollections.observableArrayList();
-			depotImages = FXCollections.observableArrayList();
-
-			depots.add(solver.getCenter());
-			for (Depot depot : routes.get(0).getDepots())
-				depots.add(depot);
-			depots.add(solver.getCenter());
-
-			depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
-			// if (depots == null) System.out.println("null depots");
-			RouteGuide.setItems(depots);
-			RouteGuide.setCellFactory(param -> new GuideCell(MainFXMLController.this));
-		}
+		afterSolve(solver, routes);
 	}
 
 	@Override
@@ -287,60 +268,6 @@ public class MainFXMLController
 		directionsPane = mapView.getDirec();
 	}
 
-	public void drawDriections(Depot start, Depot end, Route route, String color, int labelindex) {
-		GT_Line LineMarkers = new GT_Line();
-		DirectionsRequest request = null;
-		DirectionsWaypoint[] wayPoints = null;
-		MarkerOptions markerOptions = new MarkerOptions();
-		int Markindex = 0;
-		// +++ add English labels on markers
-		if (labelindex == 25)
-			labelindex = 0;
-		List<String> labelNum = new ArrayList<>();
-		String[] label = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
-				"S", "T", "U", "V", "W", "X", "Y", "Z" };
-		for (int i = 1; i <= route.getDepots().size(); i++) {
-			labelNum.add(label[labelindex] + i);
-		}
-		// --- add English labels on markers
-		if (route != null) {
-			wayPoints = new DirectionsWaypoint[route.getDepots().size()];
-			for (int idx = 0; idx < route.getDepots().size(); idx++) {
-				wayPoints[idx] = new DirectionsWaypoint(route.getDepots().get(idx).toLatLongString());
-				markerOptions
-						.position(new LatLong(route.getDepots().get(idx).getLatitude(),
-								route.getDepots().get(idx).getLongitude()))
-						.label(labelNum.get(Markindex++ % labelNum.size()));
-				Marker marker = new Marker(markerOptions);
-
-				mapView.getMap().addMarker(marker);
-				System.out.println("marker=" + marker);
-				LineMarkers.saveLineMarkers(marker); // add markers one Line
-			}
-
-			Any_Route_Marker.add(LineMarkers); // save any route markers
-			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING,
-					wayPoints);
-		} else {
-			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
-		}
-		// Add are Start & End markers on the map+++
-		markerOptions.position(new LatLong(start.getLatitude(), start.getLongitude())).label("M")
-				.icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
-		Marker marker = new Marker(markerOptions);
-		mapView.getMap().addMarker(marker);
-
-		DirectionsRenderer directionsRenderer = new DirectionsRenderer(false, mapView.getMap(), directionsPane, color);
-		directionsService.getRoute(request, this, directionsRenderer);
-		LineMarkers.saveRoute(directionsRenderer);
-
-		LineMarkers.setVisible(true);
-		// System.out.println("LineMarkers.getVisible()="+LineMarkers.getVisible());
-		// System.out.println("Any_Route_Marker.get(0).getVisible()="+Any_Route_Marker.get(labelindex).getVisible());
-		// System.out.println("Any_Route_Marker.get(1).getVisible()="+Any_Route_Marker.get(labelindex).getVisible());
-		// System.out.println("Any_Route_Marker.get(2).getVisible()="+Any_Route_Marker.get(labelindex).getVisible());
-
-	}
 
 	public void getduration(String[] waypoints) {
 		GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI");
@@ -383,10 +310,6 @@ public class MainFXMLController
 
 	private void afterSolve(IVrpSolver solver, List<Route> routes) {
 		if (routes != null) {
-
-			String[] colors = { "#438391", "#62a3cf", "#333366", "#770f5d", "#ffe246", "#9e379f", "#01aebf" };
-
-			int index = 0;
 			for (Route route : routes) {
 				System.out.println("=== ROUTE === ");
 				System.out.print("[ ");
@@ -395,10 +318,7 @@ public class MainFXMLController
 				}
 				System.out.println("]");
 
-				drawDriections(solver.getCenter(), solver.getCenter(), route, colors[index], index);
-				index++;
-				if (index > colors.length)
-					index = 0;
+				drawDriections(solver.getCenter(), solver.getCenter(), route);
 			}
 
 			if (routes.size() >= 1) {
@@ -421,4 +341,44 @@ public class MainFXMLController
 
 		}
 	}
+
+    public void drawDriections(Depot start, Depot end, Route route) {
+        GMapLine LineMarkers = new GMapLine();
+        DirectionsRequest request = null;
+        DirectionsWaypoint[] wayPoints = null;
+        MarkerOptions markerOptions = new MarkerOptions();
+
+        if (route != null) {
+            wayPoints = new DirectionsWaypoint[route.getDepots().size()];
+            for (int idx = 0; idx < route.getDepots().size(); idx++) {
+                wayPoints[idx] = new DirectionsWaypoint(route.getDepots().get(idx).toLatLongString());
+                markerOptions
+                        .position(new LatLong(route.getDepots().get(idx).getLatitude(),
+                                route.getDepots().get(idx).getLongitude()))
+                        .label(RouteLabel.getInstance().getLabel(route.getId(), idx+1));
+
+                Marker marker = new Marker(markerOptions);
+
+                mapView.getMap().addMarker(marker);
+                LineMarkers.saveLineMarkers(marker); // add markers one Line
+            }
+
+            Any_Route_Marker.add(LineMarkers); // save any route markers
+            request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING,
+                    wayPoints);
+        } else {
+            request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
+        }
+        // Add are Start & End markers on the map+++
+        markerOptions.position(new LatLong(start.getLatitude(), start.getLongitude())).label("M")
+                .icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
+        Marker marker = new Marker(markerOptions);
+        mapView.getMap().addMarker(marker);
+
+        DirectionsRenderer directionsRenderer = new DirectionsRenderer(false, mapView.getMap(), directionsPane, RouteColor.getInstance().get(route.getId()));
+        directionsService.getRoute(request, this, directionsRenderer);
+        LineMarkers.saveRoute(directionsRenderer);
+
+        LineMarkers.setVisible(true);
+    }
 }
