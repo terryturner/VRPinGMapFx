@@ -26,7 +26,7 @@
     </problemType>
     <vehicles>
         <vehicle>
-            <id>Drive</id>
+            <id>Driver</id>
             <typeId>March</typeId>
             <location>
                 <id>1</id>
@@ -39,6 +39,17 @@
         </vehicle>
     </vehicles>
     <vehicleTypes>
+		<type>
+            <id>Scooter</id>
+            <capacity>10</capacity>
+            <costs>
+				<fixed>10.0</fixed>
+                <distance>300.0</distance>
+				<time>1.0</time>
+				<service>1.0</service>
+				<wait>1.0</wait>
+            </costs>
+        </type>
 		<type>
             <id>March</id>
             <capacity>50</capacity>

@@ -5,14 +5,25 @@ public class Depot {
 	private final String mName;
 	private final double mLongitude;
 	private final double mLatitude;
+	private final boolean mBelongCenter;
 	private int mPickupCapacity = 0;
 	private int mDeliverCapacity = 0;
+	private String mNick = null;
 	
 	public Depot(String id, String name, double lng, double lat) {
-		this(id, name, lng, lat, 0, 0);
+		this(false, id, name, lng, lat, 0, 0);
 	}
 	
-	public Depot(String id, String name, double lng, double lat, int pickupNo, int deliverNo) {
+    public Depot(String id, String name, double lng, double lat, int pickupNo, int deliverNo) {
+        this(false, id, name, lng, lat, pickupNo, deliverNo);
+    }
+	
+	public Depot(boolean isCenter, String id, String name, double lng, double lat) {
+		this(isCenter, id, name, lng, lat, 0, 0);
+	}
+	
+	public Depot(boolean isCenter, String id, String name, double lng, double lat, int pickupNo, int deliverNo) {
+		mBelongCenter = isCenter;
 		mLocationID = id;
 		mName = name;
 		mLongitude = lng;
@@ -23,15 +34,21 @@ public class Depot {
 	
 	public String getLocationID() { return mLocationID; }
 	
-	public String getName() {return mName; }
+	public String getName() { return (mNick == null) ? mName : mNick; }
 	
 	public double getLongitude() { return mLongitude; }
 	
 	public double getLatitude() { return mLatitude; }
 	
+	public boolean isCenter() { return mBelongCenter; }
+	
 	public int getPickupCapacity() { return mPickupCapacity; }
 	
 	public int getDeliverCapacity() { return mDeliverCapacity; }
+	
+	public void setNickName(String name) {
+		mNick = name;
+	}
 
 	public void setPickupCapacity(int capacity) {
 		mPickupCapacity = capacity;

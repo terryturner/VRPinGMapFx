@@ -4,6 +4,7 @@ package com.goldtek.main;
 import com.goldtek.algorithm.Depot;
 import com.goldtek.algorithm.IVrpSolver;
 import com.goldtek.algorithm.Route;
+import com.goldtek.greedy.GreedySolver;
 import com.goldtek.jsprit.JspritSolver;
 import com.goldtek.main.routeguide.GuideCell;
 import com.goldtek.main.routeguide.IDragGuide;
@@ -35,11 +36,17 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class MainFXMLController implements Initializable, MapComponentInitializedListener, DirectionsServiceCallback, IDragGuide {
 
@@ -54,11 +61,9 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     protected ObservableList<Image> depotImages;
     protected Depot mDragDepot = null;
     
-    @FXML
-    protected ListView<Depot> RouteGuide;
-    
-    @FXML
-    protected GoogleMapView mapView;
+    @FXML protected BorderPane RootPane;
+    @FXML protected GoogleMapView mapView;
+    @FXML protected ListView<Depot> RouteGuide;
     
     @FXML
     private void handleMenu(ActionEvent event) {
@@ -67,6 +72,16 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 		case "MenuExit":
 			System.exit(0);
 			break;
+	     case "MenuConfig":
+	            final Stage dialog = new Stage();
+	            dialog.initModality(Modality.APPLICATION_MODAL);
+	            dialog.initOwner(mapView.getScene().getWindow());
+	            VBox dialogVbox = new VBox(20);
+	            dialogVbox.getChildren().add(new Text("This is a Dialog"));
+	            Scene dialogScene = new Scene(dialogVbox, 300, 200);
+	            dialog.setScene(dialogScene);
+	            dialog.show();
+	            break;
 		default:
 			break;
 		}
@@ -81,42 +96,14 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
     
     @FXML
     private void testAction(ActionEvent event) {
-    	IVrpSolver solver = JspritSolver.getInstance();
-    	solver.reset();
-    	solver.inputFrom("input/zhonghe_test.xml");
-    	List<Route> routes = solver.solve(20);
-    	
-    	
-    	String[] colors= { "#438391", "#62a3cf", "#333366", "#770f5d", "#ffe246", "#9e379f", "#01aebf" };
-    	
-    	int index = 0;
-    	for (Route route : routes) {
-    		System.out.println("=== ROUTE ===");
-    		System.out.print("[ ");
-    		for (Depot depot : route.getDepots()) {
-    			System.out.print(depot.getLocationID() + " ");
-    		}
-    		System.out.println("]");
-    		
-    		drawDriections(solver.getCenter(), solver.getCenter(), route, colors[index]);
-    		index++;
-    		if (index > colors.length) index = 0;
-    	}
-    	
-    	if (routes.size() == 1) {
-    		depots = FXCollections.observableArrayList();
-    		depotImages = FXCollections.observableArrayList();
-    				
-    		depots.add(solver.getCenter());
-    		for (Depot depot : routes.get(0).getDepots()) depots.add(depot);
-    		depots.add(solver.getCenter());	
-    		
-    		depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
-    		//if (depots == null) System.out.println("null depots");
-    		RouteGuide.setItems(depots);
-    		RouteGuide.setCellFactory(param -> new GuideCell(MainFXMLController.this));
-    	}
-
+        //IVrpSolver solver = JspritSolver.getInstance();
+        IVrpSolver solver = GreedySolver.getInstance();
+        solver.reset();
+        solver.inputFrom("input/zhonghe_test.xml");
+        //solver.inputFrom("input/goldtek_zhonghe.xml");
+        List<Route> routes = solver.solve(200);
+        
+        afterSolve(solver, routes);
     }
 
 
@@ -143,44 +130,6 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
         mapView.createMap(options);
         directionsService = new DirectionsService();
         directionsPane = mapView.getDirec();
-    }
-    
-    public void drawDriections(Depot start, Depot end, Route route, String color) {
-    	DirectionsRequest request = null;
-    	DirectionsWaypoint[] wayPoints = null; 
-    	MarkerOptions markerOptions = new MarkerOptions();
-    	String label[] = {"A11", "A22", "A33", "A44", "A55", "A66", "A77", "A88", "A99"};
-    	int labelIndex = 0;
-		if (route != null) {
-			wayPoints = new DirectionsWaypoint[route.getDepots().size()];
-			for (int idx = 0; idx < route.getDepots().size(); idx++) {
-				wayPoints[idx] = new DirectionsWaypoint(route.getDepots().get(idx).toLatLongString());
-
-				 //Add are waypoint markers on the map+++
-				    markerOptions.position( new LatLong(route.getDepots().get(idx).getLatitude(), route.getDepots().get(idx).getLongitude()) )
-				    			.label(label[labelIndex++ % label.length]);
-				    Marker marker = new Marker( markerOptions );
-
-				    mapView.getMap().addMarker(marker);	
-				  //Add are waypoint markers on the map---
-			}			
-			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING, wayPoints);
-		} else {
-			request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
-		}
-		
-		 //Add are Start & End markers on the map+++
-	    markerOptions.position( new LatLong(start.getLatitude(), start.getLongitude()) )
-	    			.label("中")
-	    			.icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
-	    Marker markerS = new Marker( markerOptions );
-	    mapView.getMap().addMarker(markerS);
-	    ////Add are Start & End markers on the map---
-	    
-		DirectionsRenderer directionsRenderer = new DirectionsRenderer(false, mapView.getMap(), directionsPane, color);
-        directionsService.getRoute(request, this, directionsRenderer);
-        directionsRenderers.add(directionsRenderer);
-
     }
 
     public void getduration(String[] waypoints){
@@ -221,4 +170,80 @@ public class MainFXMLController implements Initializable, MapComponentInitialize
 		return mDragDepot;
 	}
     
+	private void afterSolve(IVrpSolver solver, List<Route> routes) {
+        if (routes != null) {
+
+            String[] colors= { "#438391", "#62a3cf", "#333366", "#770f5d", "#ffe246", "#9e379f", "#01aebf" };
+            
+            int index = 0;
+            for (Route route : routes) {
+                System.out.println("=== ROUTE === ");
+                System.out.print("[ ");
+                for (Depot depot : route.getDepots()) {
+                    System.out.print(depot.getLocationID() + " ");
+                }
+                System.out.println("]");
+                
+                drawDriections(solver.getCenter(), solver.getCenter(), route, colors[index]);
+                index++;
+                if (index > colors.length) index = 0;
+            }
+            
+            if (routes.size() >= 1) {
+                depots = FXCollections.observableArrayList();
+                depotImages = FXCollections.observableArrayList();
+
+                Depot start = solver.getCenter();
+                start.setNickName("First Car");
+                depots.add(start);
+                for (Depot depot : routes.get(0).getDepots()) depots.add(depot);
+                Depot end = solver.getCenter();
+                end.setNickName("Center");
+                depots.add(end);    
+                
+                depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
+                RouteGuide.setItems(depots);
+                RouteGuide.setCellFactory(param -> new GuideCell(MainFXMLController.this));
+            }
+
+        }
+    }
+	
+	public void drawDriections(Depot start, Depot end, Route route, String color) {
+        DirectionsRequest request = null;
+        DirectionsWaypoint[] wayPoints = null; 
+        MarkerOptions markerOptions = new MarkerOptions();
+        String label[] = {"A11", "A22", "A33", "A44", "A55", "A66", "A77", "A88", "A99"};
+        int labelIndex = 0;
+        if (route != null) {
+            wayPoints = new DirectionsWaypoint[route.getDepots().size()];
+            for (int idx = 0; idx < route.getDepots().size(); idx++) {
+                wayPoints[idx] = new DirectionsWaypoint(route.getDepots().get(idx).toLatLongString());
+
+                 //Add are waypoint markers on the map+++
+                    markerOptions.position( new LatLong(route.getDepots().get(idx).getLatitude(), route.getDepots().get(idx).getLongitude()) )
+                                .label(label[labelIndex++ % label.length]);
+                    Marker marker = new Marker( markerOptions );
+
+                    mapView.getMap().addMarker(marker); 
+                  //Add are waypoint markers on the map---
+            }           
+            request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING, wayPoints);
+        } else {
+            request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
+        }
+        
+         //Add are Start & End markers on the map+++
+        markerOptions.position( new LatLong(start.getLatitude(), start.getLongitude()) )
+                    .label("中")
+                    .icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
+        Marker markerS = new Marker( markerOptions );
+        mapView.getMap().addMarker(markerS);
+        ////Add are Start & End markers on the map---
+        
+        DirectionsRenderer directionsRenderer = new DirectionsRenderer(false, mapView.getMap(), directionsPane, color);
+        directionsService.getRoute(request, this, directionsRenderer);
+        directionsRenderers.add(directionsRenderer);
+
+    }
 }

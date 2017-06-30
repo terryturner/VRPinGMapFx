@@ -34,7 +34,7 @@ public class GuideCell extends ListCell<Depot> {
         setAlignment(Pos.CENTER);
 
         setOnDragDetected(event -> {
-            if (getItem() == null) {
+            if (getItem() == null || getItem().isCenter()) {
                 return;
             }
 
@@ -52,7 +52,6 @@ public class GuideCell extends ListCell<Depot> {
         });
 
         setOnDragOver(event -> {
-        	//System.out.println("start over: " + getItem().getName());
             if (event.getGestureSource() != thisCell &&
                    event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
@@ -62,7 +61,6 @@ public class GuideCell extends ListCell<Depot> {
         });
 
         setOnDragEntered(event -> {
-        	//System.out.println("start enter: " + getItem().getName());
             if (event.getGestureSource() != thisCell &&
                     event.getDragboard().hasString()) {
                 setOpacity(0.3);
@@ -77,7 +75,7 @@ public class GuideCell extends ListCell<Depot> {
         });
 
         setOnDragDropped(event -> {
-            if (getItem() == null) {
+            if (getItem() == null || getItem().isCenter()) {
                 return;
             }
 
