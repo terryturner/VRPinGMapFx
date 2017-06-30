@@ -33,9 +33,17 @@
 	
 	<left>
 		<VBox prefWidth="180">
-			<Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearDirections" text="Clear" />
+			<Button fx:id="testButton" mnemonicParsing="false" onAction="#testAction" text="test" />
+      		<Separator orientation="HORIZONTAL"/>
+			<Button fx:id="clearButton" mnemonicParsing="false" onAction="#HideTotal" text="HideTotal" />
 			<Separator orientation="HORIZONTAL"/>
-      		<Button fx:id="testButton" mnemonicParsing="false" onAction="#testAction" text="test" />
+      		<Button fx:id="ShowA" mnemonicParsing="false" onAction="#ShowTotal" text="ShowTotal" />
+      		<Separator orientation="HORIZONTAL"/>
+      		<Button fx:id="ShowB" mnemonicParsing="false" onAction="#ShowA" text="ShowA" />
+      		<Separator orientation="HORIZONTAL"/>
+      		<Button fx:id="ShowC" mnemonicParsing="false" onAction="#ShowB" text="ShowB" />
+      		<Separator orientation="HORIZONTAL"/>
+      		<Button fx:id="ShowC" mnemonicParsing="false" onAction="#ShowC" text="ShowC" />
 		</VBox>
 	</left>
 	
