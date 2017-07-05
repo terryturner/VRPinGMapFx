@@ -7,6 +7,6 @@ public interface IVrpSolver {
 	void inputFrom(String path);
 	void costFrom(String path);
 	List<Depot> getAllService();
-	Depot getCenter();
+	Depot getCenter(int route);
 	List<Route> solve(int iterations);
 }

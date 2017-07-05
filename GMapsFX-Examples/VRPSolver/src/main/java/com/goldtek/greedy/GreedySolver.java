@@ -37,16 +37,18 @@ public class GreedySolver extends JspritSolver {
         mVRP = mVrpBuilder.build();
 
         if (mVRP.getFleetSize().equals(VehicleRoutingProblem.FleetSize.FINITE)) {
+            updateCenter();
             return finiteFleet(mVRP.getTransportCosts());
         }
         else {
+            updateCenter();
             return infiniteFleet(mVRP.getTransportCosts());
         }
     }
     
     private List<Route> infiniteFleet(VehicleRoutingTransportCosts costs) {
-        List<Route> solveRoutes = new ArrayList<>();
         List<ConsiderJob> greedyRoute = greedyRoute(costs, mVrpBuilder.getAddedVehicles().iterator().next());
+        mShowRoutes.clear();
         
         if (!mVrpBuilder.getAddedVehicles().isEmpty()) {
             Vehicle vehicle = mVrpBuilder.getAddedVehicles().iterator().next();
@@ -91,7 +93,7 @@ public class GreedySolver extends JspritSolver {
                     }
                 }
                 
-                if (vehicleRoute.getDepots().size() > 0) solveRoutes.add(vehicleRoute);
+                if (vehicleRoute.getDepots().size() > 0) mShowRoutes.add(vehicleRoute);
                 
                 isTransportable = false;
                 for (ConsiderJob job : greedyRoute) {
@@ -101,12 +103,12 @@ public class GreedySolver extends JspritSolver {
             }
         }
         
-        return solveRoutes;
+        return mShowRoutes;
     }
     
     private List<Route> finiteFleet(VehicleRoutingTransportCosts costs) {
-        List<Route> solveRoutes = new ArrayList<>();
         List<ConsiderJob> greedyRoute = greedyRoute(costs, mVrpBuilder.getAddedVehicles().iterator().next());
+        mShowRoutes.clear();
 
         mVrpBuilder.getAddedVehicles().forEach(vehicle -> {
             final int capacity = vehicle.getType().getCapacityDimensions().get(0);
@@ -147,9 +149,9 @@ public class GreedySolver extends JspritSolver {
 
             }
             
-            if (vehicleRoute.getDepots().size() > 0) solveRoutes.add(vehicleRoute);
+            if (vehicleRoute.getDepots().size() > 0) mShowRoutes.add(vehicleRoute);
         });
-        return solveRoutes;
+        return mShowRoutes;
     }
 
     private List<ConsiderJob> greedyRoute(VehicleRoutingTransportCosts costs, Vehicle vehicle) {
@@ -203,8 +205,8 @@ public class GreedySolver extends JspritSolver {
     }
 
     private List<Route> finiteFleet3(VehicleRoutingTransportCosts costs) {
-        List<Route> solveRoutes = new ArrayList<>();
         List<ConsiderJob> jobs = new ArrayList<>();
+        mShowRoutes.clear();
 
         for (Job job : mVrpBuilder.getAddedJobs()) {
             jobs.add(new ConsiderJob(job));
@@ -283,9 +285,9 @@ public class GreedySolver extends JspritSolver {
                 }
             }
             if (vehicleRoute.getDepots().size() > 0)
-                solveRoutes.add(vehicleRoute);
+                mShowRoutes.add(vehicleRoute);
         }
 
-        return solveRoutes;
+        return mShowRoutes;
     }
 }

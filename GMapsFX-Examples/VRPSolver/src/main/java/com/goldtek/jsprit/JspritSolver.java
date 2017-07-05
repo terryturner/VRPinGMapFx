@@ -30,6 +30,8 @@ public class JspritSolver implements IVrpSolver {
 	protected static IVrpSolver sInstance = null;
 	protected VehicleRoutingProblem.Builder mVrpBuilder = VehicleRoutingProblem.Builder.newInstance();
 	protected VehicleRoutingProblem mVRP = null;
+	protected List<Route> mShowRoutes = new ArrayList<>();
+	protected List<Depot> mCenterList = new ArrayList<>();
 	
 	protected JspritSolver() {}
 	
@@ -115,14 +117,9 @@ public class JspritSolver implements IVrpSolver {
 	}
 
 	@Override
-	public Depot getCenter() {
-		Depot center = null;
-		if (mVrpBuilder.getAddedVehicles().size() > 0) {
-			Vehicle car = mVrpBuilder.getAddedVehicles().iterator().next();
-			center = new Depot(true, car.getStartLocation().getId(), car.getId(),
-					car.getStartLocation().getCoordinate().getX(), car.getStartLocation().getCoordinate().getY());
-		}
-		return center;
+	public Depot getCenter(int route) {
+	    if (route < 0 || route >= mShowRoutes.size()) return null;
+	    else return mCenterList.get(route);
 	}
 
 	@Override
@@ -135,7 +132,8 @@ public class JspritSolver implements IVrpSolver {
     	VehicleRoutingProblemSolution bestSolution = Solutions.bestOf(solutions);
 
     	int index = 0;
-    	List<Route> showRoutes = new ArrayList<>();
+    	mShowRoutes.clear();
+
     	for (VehicleRoute vehicleRoute : bestSolution.getRoutes()) {    		
     		Route showRoute = new Route(index++);
 
@@ -162,8 +160,31 @@ public class JspritSolver implements IVrpSolver {
 					else if (job instanceof Delivery) depot.setDeliverCapacity(job.getSize().get(0));
     			}
     		}
-    		showRoutes.add(showRoute);
+    		mShowRoutes.add(showRoute);
     	}
-    	return showRoutes;
+    	
+    	updateCenter();
+    	return mShowRoutes;
+	}
+	
+	protected void updateCenter() {
+	    mCenterList.clear();
+	    for (Route route : mShowRoutes) {
+	        int pickupAmount = 0;
+	        int deliverAmount = 0;
+	        for (Depot depot : route.getDepots()) {
+	            pickupAmount += depot.getDeliverCapacity();
+	            deliverAmount += depot.getPickupCapacity();
+	        }
+	        
+	        Depot center = null;
+	        if (mVrpBuilder.getAddedVehicles().size() > 0) {
+	            Vehicle car = mVrpBuilder.getAddedVehicles().iterator().next();
+	            center = new Depot(true, car.getStartLocation().getId(), car.getId(),
+	                    car.getStartLocation().getCoordinate().getX(), car.getStartLocation().getCoordinate().getY(),
+	                    pickupAmount, deliverAmount);
+	        }
+	        if (center != null) mCenterList.add(center);
+	    }
 	}
 }

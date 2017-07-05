@@ -76,7 +76,7 @@ public class MainFXMLController
 			System.exit(0);
 			break;
 		case "MenuConfig":
-		    ConfigDialog dialog = new ConfigDialog(mapView.getScene().getWindow());
+		    ConfigDialog dialog = new ConfigDialog();
 			dialog.show();
 			break;
 		default:
@@ -229,7 +229,7 @@ public class MainFXMLController
 
 	@FXML
 	private void testAction(ActionEvent event) {
-//        ConfigDialog dialog = new ConfigDialog(mapView.getScene().getWindow());
+//        ConfigDialog dialog = new ConfigDialog();
 //        dialog.show();
 
 		clearAll();
@@ -257,7 +257,7 @@ public class MainFXMLController
 		MapOptions options = new MapOptions();
 
 		options.center(new LatLong(24.997861, 121.486786)).zoomControl(true).mapTypeControl(false).zoom(14)
-				.overviewMapControl(true).streetViewControl(false).mapType(MapTypeIdEnum.ROADMAP);
+				.overviewMapControl(true).streetViewControl(false).doubleClickZoomControl(false).mapType(MapTypeIdEnum.ROADMAP);
 		mapView.createMap(options);
 		directionsService = new DirectionsService();
 		directionsPane = mapView.getDirec();
@@ -313,22 +313,25 @@ public class MainFXMLController
 				}
 				System.out.println("]");
 
-				drawDriections(solver.getCenter(), solver.getCenter(), route);
+				drawDriections(solver.getCenter(0), solver.getCenter(0), route);
 			}
 
 			if (routes.size() >= 1) {
 				depots = FXCollections.observableArrayList();
 				depotImages = FXCollections.observableArrayList();
 
-				Depot start = solver.getCenter();
+				Depot start = solver.getCenter(0);
 				start.setNickName("First Car");
 				depots.add(start);
 				for (Depot depot : routes.get(0).getDepots())
 					depots.add(depot);
-				Depot end = solver.getCenter();
+				Depot end = solver.getCenter(0);
 				end.setNickName("Center");
 				depots.add(end);
 
+				for (Depot depot : depots) {
+				    System.out.println("dbg: " + depot.toString());
+				}
 				depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
 				RouteGuide.setItems(depots);
 				RouteGuide.setCellFactory(param -> new GuideCell(MainFXMLController.this));
