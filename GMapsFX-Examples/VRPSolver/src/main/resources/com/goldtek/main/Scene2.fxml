@@ -8,9 +8,14 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
 
 <BorderPane id="AnchorPane" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.goldtek.main.MainFXMLController">
 	<top>
@@ -29,12 +34,17 @@
 			</menus>
 		</MenuBar>
 	</top>
-	<center>
-		<GoogleMapView fx:id="mapView" prefHeight="600.0" prefWidth="800.0"/>
+	<center> 
+		<AnchorPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+   		<children>
+		<GoogleMapView fx:id="mapView" prefHeight="770.0" prefWidth="920.0" />	
+		<MenuButton fx:id="MenuButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Sow_Route" style="-fx-font-size: 10pt; -fx-font-weight: bolder;" />
+        </children>
+		</AnchorPane>
 	</center>
 	
 	<left>
-		<VBox prefWidth="180">
+		<VBox prefWidth="180.0">
 			<Button fx:id="testButton" mnemonicParsing="false" onAction="#testAction" text="test" />
       		<Separator orientation="HORIZONTAL"/>
 			<Button fx:id="clearButton" mnemonicParsing="false" onAction="#HideTotal" text="HideTotal" />
@@ -45,12 +55,14 @@
       		<Separator orientation="HORIZONTAL"/>
       		<Button fx:id="ShowC" mnemonicParsing="false" onAction="#ShowB" text="ShowB" />
       		<Separator orientation="HORIZONTAL"/>
-      		<Button fx:id="ShowC" mnemonicParsing="false" onAction="#ShowC" text="ShowC" />
+      		<Button fx:id="ShowC" mnemonicParsing="false" onAction="#ShowC" text="ShowC" />  	
+      		<Separator orientation="HORIZONTAL"/>
+	      	<!--<MenuButton fx:id="MenuButton" layoutX="420.0" layoutY="16.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="180.0" text="Sow_Route"/>-->
 		</VBox>
 	</left>
 	
 	<right>
-		<ListView fx:id="RouteGuide" prefWidth="180" />
+		<ListView fx:id="RouteGuide" prefWidth="180.0" />
 	</right>
 	
 </BorderPane>

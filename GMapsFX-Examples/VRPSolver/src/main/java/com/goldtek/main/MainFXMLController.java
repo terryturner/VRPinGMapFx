@@ -41,6 +41,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -63,12 +64,80 @@ public class MainFXMLController
 	protected ObservableList<Image> depotImages;
 	protected Depot mDragDepot = null;
 	protected List<GMapLine> GMapLineList = new ArrayList<>();
+	protected List<String> menubuttontext = new ArrayList<>();
 
 	@FXML protected BorderPane RootPane;
     @FXML protected GoogleMapView mapView;
     @FXML protected ListView<Depot> RouteGuide;
 
-	@FXML
+
+    @FXML
+    MenuButton MenuButton;
+    public void Menubutton() {
+    	MenuButton.getItems().clear();	//initialization menu button item text
+    	MenuItem allitem = new MenuItem("All_Routes");
+    	MenuButton.getItems().add(allitem);
+    	allitem.setOnAction(event -> {
+    		for (GMapLine lines : GMapLineList) {	//Show Total Routes
+    			if (lines.getVisible() == false) {
+    				DirectionsRenderer render = lines.getRoute();
+    				render.setMap(mapView.getMap()); // show lines
+
+    				List<Marker> marker = lines.getMarker();
+    				for (Marker markers : marker) {
+    					mapView.getMap().addMarker(markers); // show markers
+    				}
+    				lines.setVisible(true);
+    			}
+    		}
+    	});
+    	for(String lines : menubuttontext){
+    		MenuItem item = new MenuItem(lines);
+    		MenuButton.getItems().addAll(item);	//add menu item to menu button
+    		String idString = String.valueOf(menubuttontext.indexOf(lines));	//get loop index return id to String
+    		item.setId(idString);	//set item idString
+    		item.setOnAction(event -> {
+    		    MenuItem itemid = (MenuItem) event.getSource();	//get event source
+    		    String id = itemid.getId();	//get event source id
+    		    int idint = Integer.parseInt(id);	//return idString to integer
+    		    MenuButtonShow(idint);  //menu button action event functions
+    		});
+    	}
+    	menubuttontext.clear();	//clear menu button text
+    }
+    
+    @FXML
+	private void MenuButtonShow(int idint) {
+    	for(int i=0; i < GMapLineList.size(); i++){
+    		if(i == idint){
+    			if (GMapLineList.get(i).getVisible() == false) {
+    				DirectionsRenderer render = GMapLineList.get(i).getRoute();
+    				render.setMap(mapView.getMap()); // show lines 
+
+    				List<Marker> marker = GMapLineList.get(i).getMarker();
+    				for (Marker markers : marker) {
+    					mapView.getMap().addMarker(markers); // show markers 
+    				}
+    				GMapLineList.get(i).setVisible(true);
+    			}
+    		}else{
+    			if (GMapLineList.get(i).getVisible() == true) {
+    				DirectionsRenderer render = GMapLineList.get(i).getRoute();
+    				render.clearDirections(); // hide lines
+
+    				List<Marker> marker = GMapLineList.get(i).getMarker();
+    				for (Marker markers : marker) {
+    					mapView.getMap().removeMarker(markers); // hide markers
+    				}
+    				GMapLineList.get(i).setVisible(false);
+    			}
+    		}
+    	}
+	}
+    
+    
+    
+    @FXML
 	private void handleMenu(ActionEvent event) {
 		MenuItem item = ((MenuItem) event.getSource());
 		switch (item.getId()) {
@@ -231,7 +300,6 @@ public class MainFXMLController
 	private void testAction(ActionEvent event) {
 //        ConfigDialog dialog = new ConfigDialog(mapView.getScene().getWindow());
 //        dialog.show();
-
 		clearAll();
 
 		IVrpSolver solver = JspritSolver.getInstance();
@@ -239,8 +307,11 @@ public class MainFXMLController
 		solver.reset();
 		solver.inputFrom("input/zhonghe_test.xml");
 		List<Route> routes = solver.solve(20);
-
+		for(Route line : routes){	//add English route label to array list 
+			menubuttontext.add("Route"+RouteLabel.getInstance().get(routes.indexOf(line)));
+		}
 		afterSolve(solver, routes);
+		Menubutton();
 	}
 
 	@Override
@@ -306,12 +377,12 @@ public class MainFXMLController
 	private void afterSolve(IVrpSolver solver, List<Route> routes) {
 		if (routes != null) {
 			for (Route route : routes) {
-				System.out.println("=== ROUTE === ");
-				System.out.print("[ ");
-				for (Depot depot : route.getDepots()) {
-					System.out.print(depot.getLocationID() + " ");
-				}
-				System.out.println("]");
+//				System.out.println("=== ROUTE === ");
+//				System.out.print("[ ");
+//				for (Depot depot : route.getDepots()) {
+//					System.out.print(depot.getLocationID() + " ");
+//				}
+//				System.out.println("]");
 
 				drawDriections(solver.getCenter(), solver.getCenter(), route);
 			}
@@ -323,12 +394,15 @@ public class MainFXMLController
 				Depot start = solver.getCenter();
 				start.setNickName("First Car");
 				depots.add(start);
-				for (Depot depot : routes.get(0).getDepots())
+				for (Depot depot : routes.get(2).getDepots()){
 					depots.add(depot);
+					System.out.println("*******depots********["+depot);	
+				}
 				Depot end = solver.getCenter();
 				end.setNickName("Center");
 				depots.add(end);
 
+				
 				depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
 				RouteGuide.setItems(depots);
 				RouteGuide.setCellFactory(param -> new GuideCell(MainFXMLController.this));
