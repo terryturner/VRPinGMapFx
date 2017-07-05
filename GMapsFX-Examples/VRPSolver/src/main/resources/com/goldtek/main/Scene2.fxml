@@ -18,6 +18,7 @@
 			<menus>
 				<Menu mnemonicParsing="false" text="File">
 					<items>
+						<MenuItem fx:id="MenuConfig" mnemonicParsing="false" text="Config" onAction="#handleMenu" />
 						<MenuItem fx:id="MenuExit" mnemonicParsing="false" text="Exit" onAction="#handleMenu" />
 					</items>
 				</Menu>

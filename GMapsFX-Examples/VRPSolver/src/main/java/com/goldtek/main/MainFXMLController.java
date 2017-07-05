@@ -6,6 +6,7 @@ import com.goldtek.algorithm.Route;
 import com.goldtek.greedy.GreedySolver;
 import com.goldtek.algorithm.GMapLine;
 import com.goldtek.jsprit.JspritSolver;
+import com.goldtek.main.config.ConfigDialog;
 import com.goldtek.main.routeguide.GuideCell;
 import com.goldtek.main.routeguide.IDragGuide;
 import com.goldtek.main.routeguide.RouteColor;
@@ -57,18 +58,15 @@ public class MainFXMLController
 
 	protected StringProperty from = new SimpleStringProperty();
 	protected StringProperty to = new SimpleStringProperty();
-	// protected List<DirectionsRenderer> directionsRenderers = new
-	// ArrayList<>();
-	// protected List<Marker> TotalMarkers = new ArrayList<>();
+
 	protected ObservableList<Depot> depots;
 	protected ObservableList<Image> depotImages;
 	protected Depot mDragDepot = null;
-	protected List<GMapLine> Any_Route_Marker = new ArrayList<>();
-	@FXML
-	protected ListView<Depot> RouteGuide;
+	protected List<GMapLine> GMapLineList = new ArrayList<>();
 
-	@FXML
-	protected GoogleMapView mapView;
+	@FXML protected BorderPane RootPane;
+    @FXML protected GoogleMapView mapView;
+    @FXML protected ListView<Depot> RouteGuide;
 
 	@FXML
 	private void handleMenu(ActionEvent event) {
@@ -78,13 +76,7 @@ public class MainFXMLController
 			System.exit(0);
 			break;
 		case "MenuConfig":
-			final Stage dialog = new Stage();
-			dialog.initModality(Modality.APPLICATION_MODAL);
-			dialog.initOwner(mapView.getScene().getWindow());
-			VBox dialogVbox = new VBox(20);
-			dialogVbox.getChildren().add(new Text("This is a Dialog"));
-			Scene dialogScene = new Scene(dialogVbox, 300, 200);
-			dialog.setScene(dialogScene);
+		    ConfigDialog dialog = new ConfigDialog(mapView.getScene().getWindow());
 			dialog.show();
 			break;
 		default:
@@ -94,7 +86,7 @@ public class MainFXMLController
 
 	@FXML
 	private void HideTotal(ActionEvent event) {
-		for (GMapLine lines : Any_Route_Marker) {
+		for (GMapLine lines : GMapLineList) {
 			if (lines.getVisible() == true) {
 				DirectionsRenderer render = lines.getRoute();
 				render.clearDirections(); // hide lines
@@ -110,7 +102,7 @@ public class MainFXMLController
 
 	@FXML
 	private void ShowTotal(ActionEvent event) {
-		for (GMapLine lines : Any_Route_Marker) {
+		for (GMapLine lines : GMapLineList) {
 			if (lines.getVisible() == false) {
 				DirectionsRenderer render = lines.getRoute();
 				render.setMap(mapView.getMap()); // show lines
@@ -126,118 +118,121 @@ public class MainFXMLController
 
 	@FXML
 	private void ShowA(ActionEvent event) {
-		if (Any_Route_Marker.get(0).getVisible() == false) {
-			DirectionsRenderer render = Any_Route_Marker.get(0).getRoute();
+		if (GMapLineList.get(0).getVisible() == false) {
+			DirectionsRenderer render = GMapLineList.get(0).getRoute();
 			render.setMap(mapView.getMap()); // show lines N0
 
-			List<Marker> marker = Any_Route_Marker.get(0).getMarker();
+			List<Marker> marker = GMapLineList.get(0).getMarker();
 			for (Marker markers : marker) {
 				mapView.getMap().addMarker(markers); // show markers N0
 			}
-			Any_Route_Marker.get(0).setVisible(true);
+			GMapLineList.get(0).setVisible(true);
 		}
-		if (Any_Route_Marker.get(1).getVisible() == true) {
-			DirectionsRenderer render = Any_Route_Marker.get(1).getRoute();
+		if (GMapLineList.get(1).getVisible() == true) {
+			DirectionsRenderer render = GMapLineList.get(1).getRoute();
 			render.clearDirections(); // hide lines N1
 
-			List<Marker> marker = Any_Route_Marker.get(1).getMarker();
+			List<Marker> marker = GMapLineList.get(1).getMarker();
 			for (Marker markers : marker) {
 				mapView.getMap().removeMarker(markers); // hide marker N1
 			}
-			Any_Route_Marker.get(1).setVisible(false);
+			GMapLineList.get(1).setVisible(false);
 		}
-		if (Any_Route_Marker.get(2).getVisible() == true) {
-			DirectionsRenderer render = Any_Route_Marker.get(2).getRoute();
+		if (GMapLineList.get(2).getVisible() == true) {
+			DirectionsRenderer render = GMapLineList.get(2).getRoute();
 			render.clearDirections(); // hide lines N2
 
-			List<Marker> marker = Any_Route_Marker.get(2).getMarker();
+			List<Marker> marker = GMapLineList.get(2).getMarker();
 			for (Marker markers : marker) {
 				mapView.getMap().removeMarker(markers); // hide marker N2
 			}
-			Any_Route_Marker.get(2).setVisible(false);
+			GMapLineList.get(2).setVisible(false);
 		}
 	}
 
 	@FXML
 	private void ShowB(ActionEvent event) {
-		if (Any_Route_Marker.get(1).getVisible() == false) {
-			DirectionsRenderer render = Any_Route_Marker.get(1).getRoute();
+		if (GMapLineList.get(1).getVisible() == false) {
+			DirectionsRenderer render = GMapLineList.get(1).getRoute();
 			render.setMap(mapView.getMap()); // show lines N1
 
-			List<Marker> marker = Any_Route_Marker.get(1).getMarker();
+			List<Marker> marker = GMapLineList.get(1).getMarker();
 			for (Marker markers : marker) {
 				mapView.getMap().addMarker(markers); // show markers N1
 			}
-			Any_Route_Marker.get(1).setVisible(true);
+			GMapLineList.get(1).setVisible(true);
 		}
-		if (Any_Route_Marker.get(0).getVisible() == true) {
-			DirectionsRenderer render = Any_Route_Marker.get(0).getRoute();
+		if (GMapLineList.get(0).getVisible() == true) {
+			DirectionsRenderer render = GMapLineList.get(0).getRoute();
 			render.clearDirections(); // hide lines N0
 
-			List<Marker> marker = Any_Route_Marker.get(0).getMarker();
+			List<Marker> marker = GMapLineList.get(0).getMarker();
 			for (Marker markers : marker) {
 				mapView.getMap().removeMarker(markers); // hide marker N0
 			}
-			Any_Route_Marker.get(0).setVisible(false);
+			GMapLineList.get(0).setVisible(false);
 		}
-		if (Any_Route_Marker.get(2).getVisible() == true) {
-			DirectionsRenderer render = Any_Route_Marker.get(2).getRoute();
+		if (GMapLineList.get(2).getVisible() == true) {
+			DirectionsRenderer render = GMapLineList.get(2).getRoute();
 			render.clearDirections(); // hide lines N2
 
-			List<Marker> marker = Any_Route_Marker.get(2).getMarker();
+			List<Marker> marker = GMapLineList.get(2).getMarker();
 			for (Marker markers : marker) {
 				mapView.getMap().removeMarker(markers); // hide marker N2
 			}
-			Any_Route_Marker.get(2).setVisible(false);
+			GMapLineList.get(2).setVisible(false);
 		}
 	}
 
 	@FXML
 	private void ShowC(ActionEvent event) {
-		if (Any_Route_Marker.get(2).getVisible() == false) {
-			DirectionsRenderer render = Any_Route_Marker.get(2).getRoute();
+		if (GMapLineList.get(2).getVisible() == false) {
+			DirectionsRenderer render = GMapLineList.get(2).getRoute();
 			render.setMap(mapView.getMap()); // show lines N2
 
-			List<Marker> marker = Any_Route_Marker.get(2).getMarker();
+			List<Marker> marker = GMapLineList.get(2).getMarker();
 			for (Marker markers : marker) {
 				mapView.getMap().addMarker(markers); // show markers N2
 			}
-			Any_Route_Marker.get(2).setVisible(true);
+			GMapLineList.get(2).setVisible(true);
 		}
-		if (Any_Route_Marker.get(0).getVisible() == true) {
-			DirectionsRenderer render = Any_Route_Marker.get(0).getRoute();
+		if (GMapLineList.get(0).getVisible() == true) {
+			DirectionsRenderer render = GMapLineList.get(0).getRoute();
 			render.clearDirections(); // hide lines N0
 
-			List<Marker> marker = Any_Route_Marker.get(0).getMarker();
+			List<Marker> marker = GMapLineList.get(0).getMarker();
 			for (Marker markers : marker) {
 				mapView.getMap().removeMarker(markers); // hide marker N0
 			}
-			Any_Route_Marker.get(0).setVisible(false);
+			GMapLineList.get(0).setVisible(false);
 		}
-		if (Any_Route_Marker.get(1).getVisible() == true) {
-			DirectionsRenderer render = Any_Route_Marker.get(1).getRoute();
+		if (GMapLineList.get(1).getVisible() == true) {
+			DirectionsRenderer render = GMapLineList.get(1).getRoute();
 			render.clearDirections(); // hide lines N1
 
-			List<Marker> marker = Any_Route_Marker.get(1).getMarker();
+			List<Marker> marker = GMapLineList.get(1).getMarker();
 			for (Marker markers : marker) {
 				mapView.getMap().removeMarker(markers); // hide marker N1
 			}
-			Any_Route_Marker.get(1).setVisible(false);
+			GMapLineList.get(1).setVisible(false);
 		}
 	}
 
-	private void clearALL() {
+	private void clearAll() {
 		mapView.getMap().clearMarkers();
-		for (GMapLine lines : Any_Route_Marker) {
+		for (GMapLine lines : GMapLineList) {
 			DirectionsRenderer render = lines.getRoute();
 			render.clearDirections();
 		}
-		Any_Route_Marker.clear(); // clear any route markers
+		GMapLineList.clear(); // clear any route markers
 	}
 
 	@FXML
 	private void testAction(ActionEvent event) {
-		clearALL();
+//        ConfigDialog dialog = new ConfigDialog(mapView.getScene().getWindow());
+//        dialog.show();
+
+		clearAll();
 
 		IVrpSolver solver = JspritSolver.getInstance();
 		//IVrpSolver solver = GreedySolver.getInstance();
@@ -262,7 +257,7 @@ public class MainFXMLController
 		MapOptions options = new MapOptions();
 
 		options.center(new LatLong(24.997861, 121.486786)).zoomControl(true).mapTypeControl(false).zoom(14)
-				.overviewMapControl(true).streetViewControl(true).mapType(MapTypeIdEnum.ROADMAP);
+				.overviewMapControl(true).streetViewControl(false).mapType(MapTypeIdEnum.ROADMAP);
 		mapView.createMap(options);
 		directionsService = new DirectionsService();
 		directionsPane = mapView.getDirec();
@@ -363,7 +358,7 @@ public class MainFXMLController
                 LineMarkers.saveLineMarkers(marker); // add markers one Line
             }
 
-            Any_Route_Marker.add(LineMarkers); // save any route markers
+            GMapLineList.add(LineMarkers); // save any route markers
             request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING,
                     wayPoints);
         } else {
