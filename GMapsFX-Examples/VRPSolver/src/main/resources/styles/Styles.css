@@ -32,3 +32,7 @@
     -fx-text-fill: red;
 }
 
+.menu-button {
+	-fx-font-size: 10pt;
+	-fx-font-weight: bolder;
+}

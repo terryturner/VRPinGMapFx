@@ -600,6 +600,7 @@ public class VrpXMLReader {
             VehicleType type = typeBuilder.build();
             String id = type.getTypeId();
             types.put(id, type);
+            vrpBuilder.addVehicleType(type);
         }
 
         //read vehicles

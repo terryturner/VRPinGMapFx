@@ -403,6 +403,13 @@ public class VehicleRoutingProblem {
             }
             return this;
         }
+        
+        public Builder addVehicleType(VehicleType type) {
+            if (!vehicleTypes.contains(type)) {
+                vehicleTypes.add(type);
+            }
+            return this;
+        }
 
         private void incVehicleIndexCounter() {
             vehicleIndexCounter++;

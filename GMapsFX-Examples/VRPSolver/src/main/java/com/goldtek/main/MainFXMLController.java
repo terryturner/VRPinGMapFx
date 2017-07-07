@@ -106,32 +106,29 @@ public class MainFXMLController
     	menubuttontext.clear();	//clear menu button text
     }
     
-    @FXML
-	private void MenuButtonShow(int idint) {
+    
+    
+    
+	private void MenuButtonShow(int show) {
     	for(int i=0; i < GMapLineList.size(); i++){
-    		if(i == idint){
-    			if (GMapLineList.get(i).getVisible() == false) {
-    				DirectionsRenderer render = GMapLineList.get(i).getRoute();
-    				render.setMap(mapView.getMap()); // show lines 
+    	    DirectionsRenderer render = GMapLineList.get(i).getRoute();
+    	    List<Marker> marker = GMapLineList.get(i).getMarker();
+    	    
+            if (i == show && GMapLineList.get(i).getVisible() == false) {
+                render.setMap(mapView.getMap()); // show lines
 
-    				List<Marker> marker = GMapLineList.get(i).getMarker();
-    				for (Marker markers : marker) {
-    					mapView.getMap().addMarker(markers); // show markers 
-    				}
-    				GMapLineList.get(i).setVisible(true);
-    			}
-    		}else{
-    			if (GMapLineList.get(i).getVisible() == true) {
-    				DirectionsRenderer render = GMapLineList.get(i).getRoute();
-    				render.clearDirections(); // hide lines
+                for (Marker markers : marker) {
+                    mapView.getMap().addMarker(markers); // show markers
+                }
+                GMapLineList.get(i).setVisible(true);
+            } else if (i != show && GMapLineList.get(i).getVisible() == true) {
+                render.clearDirections(); // hide lines
 
-    				List<Marker> marker = GMapLineList.get(i).getMarker();
-    				for (Marker markers : marker) {
-    					mapView.getMap().removeMarker(markers); // hide markers
-    				}
-    				GMapLineList.get(i).setVisible(false);
-    			}
-    		}
+                for (Marker markers : marker) {
+                    mapView.getMap().removeMarker(markers); // hide markers
+                }
+                GMapLineList.get(i).setVisible(false);
+            }
     	}
 	}
     
@@ -298,8 +295,7 @@ public class MainFXMLController
 
 	@FXML
 	private void testAction(ActionEvent event) {
-//        ConfigDialog dialog = new ConfigDialog();
-//        dialog.show();
+
 		clearAll();
 
 		IVrpSolver solver = JspritSolver.getInstance();
@@ -321,6 +317,9 @@ public class MainFXMLController
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		mapView.addMapInializedListener(this);
+	      
+        ConfigDialog dialog = new ConfigDialog();
+        dialog.show();
 	}
 
 	@Override
@@ -383,26 +382,26 @@ public class MainFXMLController
 //					System.out.print(depot.getLocationID() + " ");
 //				}
 //				System.out.println("]");
-
-				drawDriections(solver.getCenter(0), solver.getCenter(0), route);
+			    int index = routes.indexOf(route);
+				drawDriections(solver.getCenter(index), solver.getCenter(index), route);
 			}
 
 			if (routes.size() >= 1) {
 				depots = FXCollections.observableArrayList();
 				depotImages = FXCollections.observableArrayList();
 
-				Depot start = solver.getCenter(0);
+				Depot start = solver.getCenter(2);
 				start.setNickName("First Car");
 				depots.add(start);
 				for (Depot depot : routes.get(2).getDepots()){
 					depots.add(depot);
 				}
-				Depot end = solver.getCenter(0);
+				Depot end = solver.getCenter(2);
 				end.setNickName("Center");
 				depots.add(end);
 
 				for (Depot depot : depots) {
-				    System.out.println("dbg: " + depot.toString());
+				    System.out.println("dbg: " + depot.toString());;
 				}
 				depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
 				RouteGuide.setItems(depots);

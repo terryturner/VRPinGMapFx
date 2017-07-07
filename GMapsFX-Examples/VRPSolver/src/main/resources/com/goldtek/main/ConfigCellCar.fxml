@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.goldtek.main.config.ConfigCellCarController"
+    prefWidth="80.0">
+    <children>
+        <StackPane>
+            <children>
+                <ImageView fx:id="Cancel" fitHeight="20.0" fitWidth="20.0" StackPane.alignment="CENTER_RIGHT">
+                    <image>
+                        <Image url="@../../../images/cancel.png" />
+                    </image>
+                </ImageView>
+            </children>
+         <VBox.margin>
+            <Insets bottom="5.0" />
+         </VBox.margin>
+        </StackPane>
+
+        <Text fx:id="Driver" />
+        <Text fx:id="VehicleType" />
+        <Text fx:id="Capacity" />
+    </children>
+</VBox>

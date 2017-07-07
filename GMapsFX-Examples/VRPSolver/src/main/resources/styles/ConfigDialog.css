@@ -4,3 +4,12 @@
     -fx-shadow-highlight-color: f0f0f0;
     -fx-body-color: linear-gradient(from 0em 0em to 0em 2.083333em, white, #D7D7D7, white);
 }
+
+.list-cell:empty {
+    -fx-opacity: 0;
+}
+
+.list-cell {
+  	-fx-border-color: #5D6D7E;
+  	-fx-border-insets: 10;
+}

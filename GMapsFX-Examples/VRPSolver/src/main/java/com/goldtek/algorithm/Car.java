@@ -1,28 +1,43 @@
 package com.goldtek.algorithm;
 
+import com.graphhopper.jsprit.core.problem.vehicle.Vehicle;
+
 public class Car {
 	private final String mID;
-	private final int mBeginLocationID;
-	private final double mBeginLongitude;
-	private final double mBeginLatitude;
+	private final String mModel;
+//	private final int mBeginLocationID;
+//	private final double mBeginLongitude;
+//	private final double mBeginLatitude;
 	private final int mCapacity;
-	
-	private int mEndLocationID;
-	private double mEndLongitude;
-	private double mEndLatitude;
+//	private final double mEarliestDeparture;
+//    private final double mLatestArrival;
 
-	public Car(String name, int beginID, double beginLot, double beginLat, int capacity) {
-		this(name, beginID, beginLot, beginLat, beginID, beginLot, beginLat, capacity);
+	public Car(Vehicle vehicle) {
+	    mID = vehicle.getId();
+        mModel = vehicle.getType().getTypeId();
+//        mBeginLocationID = Integer.valueOf(vehicle.getStartLocation().getId());
+//        mBeginLongitude = vehicle.getStartLocation().getCoordinate().getX();
+//        mBeginLatitude = vehicle.getStartLocation().getCoordinate().getY();
+        mCapacity = vehicle.getType().getCapacityDimensions().get(0);
+//        mEarliestDeparture = vehicle.getEarliestDeparture();
+//        mLatestArrival = vehicle.getLatestArrival();
 	}
 	
-	public Car(String name, int beginID, double beginLot, double beginLat, int endID, double endLot, double endLat, int capacity) {
-		mID = name;
-		mBeginLocationID = beginID;
-		mBeginLongitude = beginLot;
-		mBeginLatitude = beginLat;
-		mEndLocationID = endID;
-		mEndLongitude = endLot;
-		mEndLatitude = endLat;
-		mCapacity = capacity;
+	public Car(String id, String model, int capacity) {
+	    mID = id;
+	    mModel = model;
+	    mCapacity = capacity;
+	}
+	
+	public String getName() {
+	    return mID;
+	}
+	
+	public String getModel() {
+	    return mModel;
+	}
+	
+	public int getCapacity() {
+	    return mCapacity;
 	}
 }
