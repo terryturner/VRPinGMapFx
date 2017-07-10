@@ -1,22 +1,19 @@
 package com.goldtek.main.config;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.ResourceBundle;
 
 import com.goldtek.algorithm.Car;
 import com.goldtek.algorithm.CarModel;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
-import com.graphhopper.jsprit.core.problem.vehicle.Vehicle;
-import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -35,7 +32,7 @@ public class ConfigDialogController implements Initializable {
     @FXML protected Button AddVehicle;
     @FXML protected ListView<Car> VehicleList;
     
-    VehicleRoutingProblem.Builder mVrpBuilder;
+    VehicleRoutingProblem.Builder mDefaultBuilder;
     ObservableList<Car> Cars = FXCollections.observableArrayList();
 
 
@@ -56,20 +53,6 @@ public class ConfigDialogController implements Initializable {
             }
         });
 
-//        Cars.add(new Car("Terry", 1, 0, 0, 50));
-//        Cars.add(new Car("Peter", 1, 0, 0, 50));
-//        Cars.add(new Car("Fred", 1, 0, 0, 50));
-//        Cars.add(new Car("Darwin", 1, 0, 0, 50));
-//        Cars.add(new Car("Howard", 1, 0, 0, 50));
-//        Cars.add(new Car("James", 1, 0, 0, 50));
-//        Cars.add(new Car("Jason", 1, 0, 0, 50));
-//        Cars.add(new Car("Sena", 1, 0, 0, 50));
-//        Cars.add(new Car("Jeff", 1, 0, 0, 50));
-//        Cars.add(new Car("Jack", 1, 0, 0, 50));
-//        Cars.add(new Car("Derek", 1, 0, 0, 50));
-//        Cars.add(new Car("Alex", 1, 0, 0, 50));
-//        Cars.add(new Car("Bryan", 1, 0, 0, 50));
-//        Cars.add(new Car("Jackie", 1, 0, 0, 50));
         AddVehicle.setOnAction(ActionEventHandler);
         
         VehicleList.setItems(Cars);
@@ -80,7 +63,6 @@ public class ConfigDialogController implements Initializable {
         @Override
         public void handle(ActionEvent event) {
             VehicleDriverInput.getText();
-            VehicleTypeBox.getSelectionModel().getSelectedItem();
             
             for (Car car : Cars) {
                 if (car.getName().equalsIgnoreCase(VehicleDriverInput.getText())) {
@@ -88,7 +70,8 @@ public class ConfigDialogController implements Initializable {
                 }
             }
             CarModel model = VehicleTypeBox.getSelectionModel().getSelectedItem();
-            Cars.add(new Car(VehicleDriverInput.getText(), model.getModel(), model.getCapacity()));
+            Car car = new Car(VehicleDriverInput.getText(), model.getModel(), model.getCapacity()); 
+            Cars.add(car);
         }
     };
 
@@ -103,23 +86,30 @@ public class ConfigDialogController implements Initializable {
     };
 
     public void setBuilder(VehicleRoutingProblem.Builder builder) {
-        mVrpBuilder = builder;
-        updateVehicleTypeBox();
-        updateVehicleList();
+        mDefaultBuilder = builder;
+        initVehicleTypeBox();
+        initVehicleList();
     }
     
-    private void updateVehicleTypeBox() {
-        ObservableList<CarModel> vehicleTypes = FXCollections.observableArrayList();
-        for (VehicleType type : mVrpBuilder.getAddedVehicleTypes()) {
-            vehicleTypes.add(new CarModel(type));
+    public void updateVehicleList(VehicleRoutingProblem.Builder builder) {
+        for (Car car : Cars) {
+            for (CarModel model : VehicleTypeBox.getItems()) {
+                if (model.getVehicleType().getTypeId().equals(car.getModel())) {
+                    builder.addVehicle(car.toVehicle(model.getVehicleType()));
+                    break;
+                }
+            }
         }
-        VehicleTypeBox.setItems(vehicleTypes);
+    }
+    
+    private void initVehicleTypeBox() {
+        ObservableList<CarModel> CarModels = CarModel.toCarModelList(mDefaultBuilder.getAddedVehicleTypes());
+        VehicleTypeBox.setItems(CarModels);
         VehicleTypeBox.getSelectionModel().selectFirst();
     }
     
-    private void updateVehicleList() {
-        for (Vehicle vehicle : mVrpBuilder.getAddedVehicles()) {
-            Cars.add(new Car(vehicle));
-        }
+    private void initVehicleList() {
+        for (Car car : Car.toCarList(mDefaultBuilder.getAddedVehicles())) Cars.add(car);
     }
+
 }

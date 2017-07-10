@@ -38,7 +38,7 @@
 		<AnchorPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
    		<children>
 		<GoogleMapView fx:id="mapView" prefHeight="770.0" prefWidth="920.0" />	
-		<MenuButton fx:id="MenuButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" layoutX="10.0" layoutY="10.0" text="Sow_Route"/>
+		<MenuButton fx:id="MenuButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="140.0" layoutX="10.0" layoutY="10.0" text="Show Routes"/>
         </children>
 		</AnchorPane>
 	</center>

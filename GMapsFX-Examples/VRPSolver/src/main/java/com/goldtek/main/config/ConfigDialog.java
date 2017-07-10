@@ -7,7 +7,9 @@ import java.io.IOException;
 
 import com.goldtek.main.FileHandle;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
+import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem.FleetSize;
 import com.graphhopper.jsprit.io.problem.VrpXMLReader;
+import com.graphhopper.jsprit.io.problem.VrpXMLWriter;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,6 +20,7 @@ import javafx.stage.Window;
 import javafx.util.Callback;
 
 public class ConfigDialog implements Callback<ButtonType, Boolean>{
+    private final VehicleRoutingProblem.Builder mDefaultBuilder = VehicleRoutingProblem.Builder.newInstance();
     private final VehicleRoutingProblem.Builder mVrpBuilder = VehicleRoutingProblem.Builder.newInstance();
     private ConfigDialogController mController;
     
@@ -60,9 +63,9 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
             else inputPath = file.getPath();
         }
 
-        new VrpXMLReader(mVrpBuilder).read(inputPath);
+        new VrpXMLReader(mDefaultBuilder).read(inputPath);
 
-        mController.setBuilder(mVrpBuilder);
+        mController.setBuilder(mDefaultBuilder);
     }
     
     public void show() {
@@ -72,6 +75,9 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
     @Override
     public Boolean call(ButtonType buttonType) {
         if (buttonType == mConfirmButton) {
+            mVrpBuilder.setFleetSize(FleetSize.FINITE);
+            mController.updateVehicleList(mVrpBuilder);
+            new VrpXMLWriter(mVrpBuilder.build()).write("config.xml");;
             return true;
         } else if (buttonType == mCancelButton) {
             System.exit(0);

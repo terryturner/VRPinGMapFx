@@ -70,13 +70,11 @@ public class MainFXMLController
 	@FXML protected BorderPane RootPane;
     @FXML protected GoogleMapView mapView;
     @FXML protected ListView<Depot> RouteGuide;
+    @FXML protected MenuButton MenuButton;
 
-
-    @FXML
-    MenuButton MenuButton;
-    public void Menubutton() {
+    private void updateMenubutton() {
     	MenuButton.getItems().clear();	//initialization menu button item text
-    	MenuItem allitem = new MenuItem("All_Routes");
+    	MenuItem allitem = new MenuItem("All Routes");
     	MenuButton.getItems().add(allitem);
     	allitem.setOnAction(event -> {
     		for (GMapLine lines : GMapLineList) {	//Show Total Routes
@@ -311,10 +309,10 @@ public class MainFXMLController
 		solver.inputFrom(inputPath);
 		List<Route> routes = solver.solve(20);
 		for(Route line : routes){	//add English route label to array list 
-			menubuttontext.add("Route"+RouteLabel.getInstance().get(routes.indexOf(line)));
+			menubuttontext.add("Route "+RouteLabel.getInstance().get(routes.indexOf(line)));
 		}
 		afterSolve(solver, routes);
-		Menubutton();
+		updateMenubutton();
 	}
 
 	@Override
@@ -324,9 +322,6 @@ public class MainFXMLController
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		mapView.addMapInializedListener(this);
-	      
-//        ConfigDialog dialog = new ConfigDialog();
-//        dialog.show();
 	}
 
 	@Override
@@ -383,12 +378,6 @@ public class MainFXMLController
 	private void afterSolve(IVrpSolver solver, List<Route> routes) {
 		if (routes != null) {
 			for (Route route : routes) {
-//				System.out.println("=== ROUTE === ");
-//				System.out.print("[ ");
-//				for (Depot depot : route.getDepots()) {
-//					System.out.print(depot.getLocationID() + " ");
-//				}
-//				System.out.println("]");
 			    int index = routes.indexOf(route);
 				drawDriections(solver.getCenter(index), solver.getCenter(index), route);
 			}
@@ -446,7 +435,7 @@ public class MainFXMLController
             request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING);
         }
         // Add are Start & End markers on the map+++
-        markerOptions.position(new LatLong(start.getLatitude(), start.getLongitude())).label("M")
+        markerOptions.position(new LatLong(start.getLatitude(), start.getLongitude()))
                 .icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
         Marker marker = new Marker(markerOptions);
         mapView.getMap().addMarker(marker);

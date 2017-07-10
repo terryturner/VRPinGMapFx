@@ -22,12 +22,11 @@
          xsi:schemaLocation="http://www.w3schools.com vrp_xml_schema.xsd">
     <problemType>
         <fleetSize>INFINITE</fleetSize>
-        <fleetComposition>HOMOGENEOUS</fleetComposition>
     </problemType>
     <vehicles>
         <vehicle>
             <id>Driver</id>
-            <typeId>Truck</typeId>
+            <typeId>March</typeId>
             <location>
                 <id>1</id>
                 <coord y="24.997798" x="121.487799"/>

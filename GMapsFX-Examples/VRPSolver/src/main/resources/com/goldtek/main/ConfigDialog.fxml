@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.media.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
@@ -10,8 +11,8 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="/styles/ConfigDialog.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.goldtek.main.config.ConfigDialogController">
    <children>
 
-      <Separator prefWidth="200.0" />
-      <TitledPane fx:id="VehiclePane" animated="false" text="Vehicle List">
+      <Separator />
+      <TitledPane fx:id="VehiclePane" animated="false" expanded="false" text="Vehicle List">
          <content>
             <VBox>
                <children>
@@ -52,12 +53,33 @@
             </VBox>
          </content>
       </TitledPane>
-      <Separator prefWidth="200.0" />
-      <TitledPane fx:id="ServicePane" animated="false" expanded="false" text="Service List">
+      <Separator />
+      <TitledPane fx:id="ServicePane" animated="false" text="Service List">
         <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <AnchorPane>
                <children>
-                  <ListView fx:id="ServiceList" layoutX="199.0" layoutY="-13.0" prefHeight="174.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <TabPane tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab text="中和區">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0">
+                                 <children>
+                                    <ListView fx:id="ServicePane1" prefHeight="260.0" prefWidth="570.0" />
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                      <Tab text="板橋區">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0">
+                                 <children>
+                                    <ListView fx:id="ServicePane2" prefHeight="260.0" prefWidth="570.0" />
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
                </children>
             </AnchorPane>
         </content>
