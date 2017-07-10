@@ -27,7 +27,7 @@
     <vehicles>
         <vehicle>
             <id>Driver</id>
-            <typeId>Scooter</typeId>
+            <typeId>Truck</typeId>
             <location>
                 <id>1</id>
                 <coord y="24.997798" x="121.487799"/>

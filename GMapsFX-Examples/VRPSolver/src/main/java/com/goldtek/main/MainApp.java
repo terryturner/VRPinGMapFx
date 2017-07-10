@@ -1,5 +1,7 @@
 package com.goldtek.main;
 
+import java.net.URL;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,7 +23,6 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
     	Parent root = FXMLLoader.load(getClass().getResource("/com/goldtek/main/Scene2.fxml"));
         Scene scene = new Scene(root);
         stage.setFullScreen(false);

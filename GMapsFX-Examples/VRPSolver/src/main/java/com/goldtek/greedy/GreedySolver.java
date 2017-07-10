@@ -37,11 +37,9 @@ public class GreedySolver extends JspritSolver {
         mVRP = mVrpBuilder.build();
 
         if (mVRP.getFleetSize().equals(VehicleRoutingProblem.FleetSize.FINITE)) {
-            updateCenter();
             return finiteFleet(mVRP.getTransportCosts());
         }
         else {
-            updateCenter();
             return infiniteFleet(mVRP.getTransportCosts());
         }
     }
@@ -102,7 +100,7 @@ public class GreedySolver extends JspritSolver {
                 }
             }
         }
-        
+        updateCenter();
         return mShowRoutes;
     }
     
@@ -151,6 +149,7 @@ public class GreedySolver extends JspritSolver {
             
             if (vehicleRoute.getDepots().size() > 0) mShowRoutes.add(vehicleRoute);
         });
+        updateCenter();
         return mShowRoutes;
     }
 

@@ -24,6 +24,7 @@ import com.lynden.gmapsfx.MapComponentInitializedListener;
 import com.lynden.gmapsfx.javascript.object.*;
 import com.lynden.gmapsfx.service.directions.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -142,7 +143,7 @@ public class MainFXMLController
 			System.exit(0);
 			break;
 		case "MenuConfig":
-		    ConfigDialog dialog = new ConfigDialog();
+		    ConfigDialog dialog = new ConfigDialog(RootPane.getScene().getWindow());
 			dialog.show();
 			break;
 		default:
@@ -295,13 +296,19 @@ public class MainFXMLController
 
 	@FXML
 	private void testAction(ActionEvent event) {
-
+	    String inputPath = "input/zhonghe_test.xml";
 		clearAll();
+		
+		if (!FileHandle.getInstance().isExists(inputPath)) {
+		    File file = FileHandle.getInstance().showXMLChooser(RootPane.getScene().getWindow());
+		    if (file == null) return;
+		    else inputPath = file.getPath();
+		}
 
 		IVrpSolver solver = JspritSolver.getInstance();
 		//IVrpSolver solver = GreedySolver.getInstance();
 		solver.reset();
-		solver.inputFrom("input/zhonghe_test.xml");
+		solver.inputFrom(inputPath);
 		List<Route> routes = solver.solve(20);
 		for(Route line : routes){	//add English route label to array list 
 			menubuttontext.add("Route"+RouteLabel.getInstance().get(routes.indexOf(line)));
@@ -318,8 +325,8 @@ public class MainFXMLController
 	public void initialize(URL url, ResourceBundle rb) {
 		mapView.addMapInializedListener(this);
 	      
-        ConfigDialog dialog = new ConfigDialog();
-        dialog.show();
+//        ConfigDialog dialog = new ConfigDialog();
+//        dialog.show();
 	}
 
 	@Override
@@ -390,13 +397,13 @@ public class MainFXMLController
 				depots = FXCollections.observableArrayList();
 				depotImages = FXCollections.observableArrayList();
 
-				Depot start = solver.getCenter(2);
+				Depot start = solver.getCenter(0);
 				start.setNickName("First Car");
 				depots.add(start);
-				for (Depot depot : routes.get(2).getDepots()){
+				for (Depot depot : routes.get(0).getDepots()){
 					depots.add(depot);
 				}
-				Depot end = solver.getCenter(2);
+				Depot end = solver.getCenter(0);
 				end.setNickName("Center");
 				depots.add(end);
 

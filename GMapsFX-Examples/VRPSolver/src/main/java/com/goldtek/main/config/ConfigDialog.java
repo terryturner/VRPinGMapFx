@@ -2,34 +2,33 @@ package com.goldtek.main.config;
 
 import javafx.scene.control.ButtonBar.ButtonData;
 
+import java.io.File;
 import java.io.IOException;
 
-import com.goldtek.algorithm.Car;
-import com.goldtek.algorithm.Depot;
+import com.goldtek.main.FileHandle;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
 import com.graphhopper.jsprit.io.problem.VrpXMLReader;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
+import javafx.stage.Window;
 import javafx.util.Callback;
-import javafx.util.Pair;
 
 public class ConfigDialog implements Callback<ButtonType, Boolean>{
     private final VehicleRoutingProblem.Builder mVrpBuilder = VehicleRoutingProblem.Builder.newInstance();
     private ConfigDialogController mController;
     
+    private final Window mWindow;
     private final ButtonType mConfirmButton = new ButtonType("Confirm", ButtonData.OK_DONE);
     private final ButtonType mCancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);    
     private final Dialog<Boolean> Dialog = new Dialog<>();
 
-    public ConfigDialog() {
+    public ConfigDialog(Window win) {
+        mWindow = win;
+
         Dialog.setTitle("Algorithm Config");
         Dialog.setHeaderText("Adjust parameters here");
         
@@ -53,7 +52,16 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
         Dialog.setResultConverter(this);
         Dialog.getDialogPane().setPrefSize(600, 480);
         
-        new VrpXMLReader(mVrpBuilder).read("input/zhonghe_test_vehicle.xml");
+        String inputPath = "input/zhonghe_test_vehicle.xml";
+        if (!FileHandle.getInstance().isExists(inputPath))
+        {
+            File file = FileHandle.getInstance().showXMLChooser(mWindow);
+            if (file == null) return;
+            else inputPath = file.getPath();
+        }
+
+        new VrpXMLReader(mVrpBuilder).read(inputPath);
+
         mController.setBuilder(mVrpBuilder);
     }
     

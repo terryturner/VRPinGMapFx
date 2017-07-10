@@ -83,7 +83,7 @@ public class ConfigDialogController implements Initializable {
             VehicleTypeBox.getSelectionModel().getSelectedItem();
             
             for (Car car : Cars) {
-                if (car.getName().equals(VehicleDriverInput.getText())) {
+                if (car.getName().equalsIgnoreCase(VehicleDriverInput.getText())) {
                     return;
                 }
             }
