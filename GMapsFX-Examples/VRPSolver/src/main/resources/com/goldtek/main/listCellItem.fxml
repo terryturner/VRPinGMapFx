@@ -1,0 +1,10 @@
+ <?import com.goldtek.main.routeguide.Data?>
+ <?import javafx.scene.layout.HBox?>
+ <?import javafx.scene.control.Label?>
+  <?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:id="vBox">	
+<children>
+    <Label  fx:id="label1"/>
+</children>
+</VBox>

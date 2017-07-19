@@ -8,11 +8,11 @@ public class RouteColor {
     
     public static RouteColor getInstance() { return sInstance; }
     
-    private RouteColor() {
+    public RouteColor() {
         
     }
     
-    private String[] colors = { "#438391", "#62a3cf", "#333366", "#770f5d", "#ffe246", "#9e379f", "#01aebf" };
+    private String[] colors = { "#006600", "#ff0000", "#6600ff", "#ff9900", "#800000", "#ff00ff", "#0099cc" };
     
     public String get(int index) {
         if (index < 0) index = 0;

@@ -1,10 +1,6 @@
 package com.goldtek.main;
 
-import com.goldtek.algorithm.Depot;
-import com.goldtek.algorithm.IVrpSolver;
-import com.goldtek.algorithm.Route;
 import com.goldtek.greedy.GreedySolver;
-import com.goldtek.algorithm.GMapLine;
 import com.goldtek.jsprit.JspritSolver;
 import com.goldtek.main.config.ConfigDialog;
 import com.goldtek.main.routeguide.GuideCell;
@@ -28,9 +24,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
+
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -40,17 +39,27 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+//+++++++++
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.util.Callback;
+import java.io.IOException;
+import java.util.Set;
+import com.goldtek.main.routeguide.*;
+import com.goldtek.algorithm.*;
+import com.goldtek.algorithm.ColorfulDepot.ListViewID;
+//---------
 
 public class MainFXMLController
 		implements Initializable, MapComponentInitializedListener, DirectionsServiceCallback, IDragGuide {
@@ -63,77 +72,146 @@ public class MainFXMLController
 
 	protected ObservableList<Depot> depots;
 	protected ObservableList<Image> depotImages;
+
 	protected Depot mDragDepot = null;
 	protected List<GMapLine> GMapLineList = new ArrayList<>();
 	protected List<String> menubuttontext = new ArrayList<>();
 
+	protected ObservableList<ColorfulDepot> item_route_any;
+	ObservableList<ColorfulDepot> item_route_total = FXCollections.observableArrayList();
+	protected List<Route> save_route = new ArrayList<>();
+	protected ObservableList<ColorfulDepot> item_route_No;
+	IVrpSolver solver = JspritSolver.getInstance();
+
 	@FXML protected BorderPane RootPane;
-    @FXML protected GoogleMapView mapView;
-    @FXML protected ListView<Depot> RouteGuide;
-    @FXML protected MenuButton MenuButton;
+	@FXML protected GoogleMapView mapView;
+	@FXML protected ListView<Depot> RouteGuide;
+	@FXML private ListView<ColorfulDepot> listView = new ListView<>();
+	@FXML MenuButton MenuButton = new MenuButton();
 
-    private void updateMenubutton() {
-    	MenuButton.getItems().clear();	//initialization menu button item text
-    	MenuItem allitem = new MenuItem("All Routes");
-    	MenuButton.getItems().add(allitem);
-    	allitem.setOnAction(event -> {
-    		for (GMapLine lines : GMapLineList) {	//Show Total Routes
-    			if (lines.getVisible() == false) {
-    				DirectionsRenderer render = lines.getRoute();
-    				render.setMap(mapView.getMap()); // show lines
+	public void updateMenubutton() {
+		MenuButton.getItems().clear(); // initialization menu button item text
+		MenuItem allitem = new MenuItem("All_Routes");
+		MenuButton.getItems().add(allitem);
+		allitem.setOnAction(event -> {
+			for (GMapLine lines : GMapLineList) { // Show Total Routes
+				if (lines.getVisible() == false) {
+					DirectionsRenderer render = lines.getRoute();
+					render.setMap(mapView.getMap()); // show lines
 
-    				List<Marker> marker = lines.getMarker();
-    				for (Marker markers : marker) {
-    					mapView.getMap().addMarker(markers); // show markers
-    				}
-    				lines.setVisible(true);
-    			}
-    		}
-    	});
-    	for(String lines : menubuttontext){
-    		MenuItem item = new MenuItem(lines);
-    		MenuButton.getItems().addAll(item);	//add menu item to menu button
-    		String idString = String.valueOf(menubuttontext.indexOf(lines));	//get loop index return id to String
-    		item.setId(idString);	//set item idString
-    		item.setOnAction(event -> {
-    		    MenuItem itemid = (MenuItem) event.getSource();	//get event source
-    		    String id = itemid.getId();	//get event source id
-    		    int idint = Integer.parseInt(id);	//return idString to integer
-    		    MenuButtonShow(idint);  //menu button action event functions
-    		});
-    	}
-    	menubuttontext.clear();	//clear menu button text
-    }
-    
-    
-    
-    
-	private void MenuButtonShow(int show) {
-    	for(int i=0; i < GMapLineList.size(); i++){
-    	    DirectionsRenderer render = GMapLineList.get(i).getRoute();
-    	    List<Marker> marker = GMapLineList.get(i).getMarker();
-    	    
-            if (i == show && GMapLineList.get(i).getVisible() == false) {
-                render.setMap(mapView.getMap()); // show lines
+					List<Marker> marker = lines.getMarker();
+					for (Marker markers : marker) {
+						mapView.getMap().addMarker(markers); // show markers
+					}
+					lines.setVisible(true);
+				}
+			}
+			// ++++
+			item_route_total.clear();
+			item_route_No = FXCollections.observableArrayList();
+			for (Route route : save_route) {
+				int R = save_route.indexOf(route);
+				Depot start = solver.getCenter(R);
+				ColorfulDepot startdepot = new ColorfulDepot(R, start, ListViewID.START);
+				item_route_No.add(startdepot);
+				for (Depot depot : save_route.get(R).getDepots()) {
+					ColorfulDepot pointdepot = new ColorfulDepot(R, depot, ListViewID.WAYPOINT);
+					pointdepot.setDepotPoint(save_route.get(R).getDepots().indexOf(depot));
+					item_route_No.add(pointdepot);
+				}
+				Depot end = solver.getCenter(R);
+				ColorfulDepot enddepot = new ColorfulDepot(R, end, ListViewID.END);
+				item_route_No.add(enddepot);
 
-                for (Marker markers : marker) {
-                    mapView.getMap().addMarker(markers); // show markers
-                }
-                GMapLineList.get(i).setVisible(true);
-            } else if (i != show && GMapLineList.get(i).getVisible() == true) {
-                render.clearDirections(); // hide lines
-
-                for (Marker markers : marker) {
-                    mapView.getMap().removeMarker(markers); // hide markers
-                }
-                GMapLineList.get(i).setVisible(false);
-            }
-    	}
+				item_route_total.setAll(item_route_No);
+				listView.setItems(item_route_total);
+				listView.setCellFactory(
+						new Callback<ListView<ColorfulDepot>, javafx.scene.control.ListCell<ColorfulDepot>>() {
+							@Override
+							public ListCell<ColorfulDepot> call(ListView<ColorfulDepot> listView) {
+								return new Data();
+							}
+						});
+			}
+			// ----
+			MenuButton.setText("All");
+		});
+		for (String lines : menubuttontext) {
+			MenuItem item = new MenuItem(lines);
+			MenuButton.getItems().addAll(item); // add menu item to menu button
+			String idString = String.valueOf(menubuttontext.indexOf(lines));
+			item.setId(idString); // set item idString
+			item.setOnAction(event -> {
+				MenuItem itemid = (MenuItem) event.getSource();
+				String id = itemid.getId(); // get event source id
+				int idint = Integer.parseInt(id); // return idString to integer
+				MenuButton_ShowRoute(idint); // menu button action event functions
+				MenuButton_Showitem(idint);
+				MenuButton.setText(lines);
+			});
+		}
+		menubuttontext.clear(); // clear menu button text
+		MenuButton.setText("Options");
 	}
-    
-    
-    
-    @FXML
+
+	@FXML
+	private void MenuButton_Showitem(int idint) {
+		// ++++
+		item_route_total.clear();
+		item_route_No = FXCollections.observableArrayList();
+		Depot start = solver.getCenter(idint);
+		ColorfulDepot startdepot = new ColorfulDepot(idint, start, ListViewID.START);
+		item_route_No.add(startdepot);
+		for (Depot depot : save_route.get(idint).getDepots()) {
+			ColorfulDepot pointdepot = new ColorfulDepot(idint, depot, ListViewID.WAYPOINT);
+			pointdepot.setDepotPoint(save_route.get(idint).getDepots().indexOf(depot));
+			item_route_No.add(pointdepot);
+		}
+		Depot end = solver.getCenter(idint);
+		ColorfulDepot enddepot = new ColorfulDepot(idint, end, ListViewID.END);
+		item_route_No.add(enddepot);
+
+		item_route_total.setAll(item_route_No);
+		listView.setItems(item_route_total);
+		listView.setCellFactory(new Callback<ListView<ColorfulDepot>, javafx.scene.control.ListCell<ColorfulDepot>>() {
+			@Override
+			public ListCell<ColorfulDepot> call(ListView<ColorfulDepot> listView) {
+				return new Data();
+			}
+		});
+		// ----
+	}
+
+	@FXML
+	private void MenuButton_ShowRoute(int idint) {
+		for (int i = 0; i < GMapLineList.size(); i++) {
+			if (i == idint) {
+				if (GMapLineList.get(i).getVisible() == false) {
+					DirectionsRenderer render = GMapLineList.get(i).getRoute();
+					render.setMap(mapView.getMap()); // show lines
+
+					List<Marker> marker = GMapLineList.get(i).getMarker();
+					for (Marker markers : marker) {
+						mapView.getMap().addMarker(markers); // show markers
+					}
+					GMapLineList.get(i).setVisible(true);
+				}
+			} else {
+				if (GMapLineList.get(i).getVisible() == true) {
+					DirectionsRenderer render = GMapLineList.get(i).getRoute();
+					render.clearDirections(); // hide lines
+
+					List<Marker> marker = GMapLineList.get(i).getMarker();
+					for (Marker markers : marker) {
+						mapView.getMap().removeMarker(markers); // hide markers
+					}
+					GMapLineList.get(i).setVisible(false);
+				}
+			}
+		}
+	}
+
+	@FXML
 	private void handleMenu(ActionEvent event) {
 		MenuItem item = ((MenuItem) event.getSource());
 		switch (item.getId()) {
@@ -303,13 +381,14 @@ public class MainFXMLController
 		    else inputPath = file.getPath();
 		}
 
-		IVrpSolver solver = JspritSolver.getInstance();
-		//IVrpSolver solver = GreedySolver.getInstance();
+		// IVrpSolver solver = JspritSolver.getInstance();
+		// IVrpSolver solver = GreedySolver.getInstance();
 		solver.reset();
 		solver.inputFrom(inputPath);
 		List<Route> routes = solver.solve(20);
-		for(Route line : routes){	//add English route label to array list 
-			menubuttontext.add("Route "+RouteLabel.getInstance().get(routes.indexOf(line)));
+		save_route = solver.solve(20);
+		for (Route line : routes) { // add English route label to array list
+			menubuttontext.add("Route" + RouteLabel.getInstance().get(routes.indexOf(line)));
 		}
 		afterSolve(solver, routes);
 		updateMenubutton();
@@ -329,12 +408,12 @@ public class MainFXMLController
 		MapOptions options = new MapOptions();
 
 		options.center(new LatLong(24.997861, 121.486786)).zoomControl(true).mapTypeControl(false).zoom(14)
-				.overviewMapControl(true).streetViewControl(false).doubleClickZoomControl(false).mapType(MapTypeIdEnum.ROADMAP);
+				.overviewMapControl(true).streetViewControl(false).doubleClickZoomControl(false)
+				.mapType(MapTypeIdEnum.ROADMAP);
 		mapView.createMap(options);
 		directionsService = new DirectionsService();
 		directionsPane = mapView.getDirec();
 	}
-
 
 	public void getduration(String[] waypoints) {
 		GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI");
@@ -380,30 +459,49 @@ public class MainFXMLController
 			for (Route route : routes) {
 			    int index = routes.indexOf(route);
 				drawDriections(solver.getCenter(index), solver.getCenter(index), route);
+				// System.out.println("=== ROUTE === ");
+				// System.out.print("[ ");
+				// for (Depot depot : route.getDepots()) {
+				// System.out.print(depot.getLocationID() + " ");
+				// }
+				// System.out.println("]");
+
 			}
 
 			if (routes.size() >= 1) {
 				depots = FXCollections.observableArrayList();
 				depotImages = FXCollections.observableArrayList();
+				item_route_any = FXCollections.observableArrayList();
+				for (Route route : routes) {
+					int R = routes.indexOf(route);
+					Depot start = solver.getCenter(R);
+					// start.setNickName("First Car");
+					// depots.add(start);
+					ColorfulDepot startdepot = new ColorfulDepot(R, start, ListViewID.START);
+					item_route_any.add(startdepot);
 
-				Depot start = solver.getCenter(0);
-				start.setNickName("First Car");
-				depots.add(start);
-				for (Depot depot : routes.get(0).getDepots()){
-					depots.add(depot);
-				}
-				Depot end = solver.getCenter(0);
-				end.setNickName("Center");
-				depots.add(end);
+					// System.out.println(".startdepot.getDepot()()==>"+startdepot.getDepot());
 
-				for (Depot depot : depots) {
-				    System.out.println("dbg: " + depot.toString());;
+					for (Depot depot : routes.get(R).getDepots()) {
+						ColorfulDepot pointdepot = new ColorfulDepot(R, depot, ListViewID.WAYPOINT);
+						pointdepot.setDepotPoint(routes.get(R).getDepots().indexOf(depot));
+						item_route_any.add(pointdepot);
+					}
+					Depot end = solver.getCenter(R);
+					ColorfulDepot enddepot = new ColorfulDepot(R, end, ListViewID.END);
+					item_route_any.add(enddepot);
+
+					item_route_total.setAll(item_route_any);
+					listView.setItems(item_route_total);
+					listView.setCellFactory(
+							new Callback<ListView<ColorfulDepot>, javafx.scene.control.ListCell<ColorfulDepot>>() {
+								@Override
+								public ListCell<ColorfulDepot> call(ListView<ColorfulDepot> listView) {
+									return new Data();
+								}
+							});
 				}
-				depots.forEach(depot -> depotImages.add(GuideCell.textToImage(depot.getName())));
-				RouteGuide.setItems(depots);
-				RouteGuide.setCellFactory(param -> new GuideCell(MainFXMLController.this));
 			}
-
 		}
 	}
 
