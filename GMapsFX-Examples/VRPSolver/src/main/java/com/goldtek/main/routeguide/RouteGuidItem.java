@@ -20,7 +20,7 @@ import com.goldtek.algorithm.ColorfulDepot;
 import com.goldtek.algorithm.ColorfulDepot.ListViewID;
 import com.goldtek.algorithm.Depot;
 
-public class Data extends ListCell<ColorfulDepot> {
+public class RouteGuidItem extends ListCell<ColorfulDepot> {
 	@FXML
 	private VBox vBox;
 	@FXML
@@ -30,8 +30,8 @@ public class Data extends ListCell<ColorfulDepot> {
 
 	Parent root;
 
-	public Data() {
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/goldtek/main/listCellItem.fxml"));
+	public RouteGuidItem() {
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/goldtek/main/RouteGuidItem.fxml"));
 		fxmlLoader.setController(this);
 		try {
 			root = fxmlLoader.load();

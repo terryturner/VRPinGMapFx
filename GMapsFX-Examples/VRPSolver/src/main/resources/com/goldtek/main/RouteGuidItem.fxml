@@ -1,4 +1,4 @@
- <?import com.goldtek.main.routeguide.Data?>
+ <?import com.goldtek.main.routeguide.RouteGuidItem?>
  <?import javafx.scene.layout.HBox?>
  <?import javafx.scene.control.Label?>
   <?import javafx.scene.layout.VBox?>

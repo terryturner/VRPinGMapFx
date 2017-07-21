@@ -61,8 +61,7 @@
 	</left>
 	
 	<right>
-		<!--<ListView fx:id="RouteGuide" prefWidth="180.0" />-->
-		<ListView fx:id="listView"/>
+		<ListView fx:id="RouteGuide"/>
 	</right>
 	
 </BorderPane>
