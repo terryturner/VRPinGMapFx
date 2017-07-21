@@ -5,11 +5,8 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import java.io.File;
 import java.io.IOException;
 
+import com.goldtek.algorithm.VrpMaker;
 import com.goldtek.main.FileHandle;
-import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
-import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem.FleetSize;
-import com.graphhopper.jsprit.io.problem.VrpXMLReader;
-import com.graphhopper.jsprit.io.problem.VrpXMLWriter;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,8 +17,7 @@ import javafx.stage.Window;
 import javafx.util.Callback;
 
 public class ConfigDialog implements Callback<ButtonType, Boolean>{
-    private final VehicleRoutingProblem.Builder mDefaultBuilder = VehicleRoutingProblem.Builder.newInstance();
-    private final VehicleRoutingProblem.Builder mVrpBuilder = VehicleRoutingProblem.Builder.newInstance();
+    private VrpMaker mVrpMaker = VrpMaker.getInstance();
     private ConfigDialogController mController;
     
     private final Window mWindow;
@@ -55,7 +51,7 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
         Dialog.setResultConverter(this);
         Dialog.getDialogPane().setPrefSize(600, 480);
         
-        String inputPath = "input/zhonghe_test_vehicle.xml";
+        String inputPath = "input/goldtek_golden_sample.xml";
         if (!FileHandle.getInstance().isExists(inputPath))
         {
             File file = FileHandle.getInstance().showXMLChooser(mWindow);
@@ -63,9 +59,8 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
             else inputPath = file.getPath();
         }
 
-        new VrpXMLReader(mDefaultBuilder).read(inputPath);
-
-        mController.setBuilder(mDefaultBuilder);
+        mVrpMaker.readForGoldenSample(inputPath);
+        mController.setBuilder();
     }
     
     public void show() {
@@ -75,9 +70,8 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
     @Override
     public Boolean call(ButtonType buttonType) {
         if (buttonType == mConfirmButton) {
-            mVrpBuilder.setFleetSize(FleetSize.FINITE);
-            mController.updateVehicleList(mVrpBuilder);
-            new VrpXMLWriter(mVrpBuilder.build()).write("config.xml");;
+            mController.updateVehicleList();
+            mVrpMaker.buildFiniteSize();
             return true;
         } else if (buttonType == mCancelButton) {
             System.exit(0);

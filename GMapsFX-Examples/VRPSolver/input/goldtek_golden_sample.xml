@@ -1,0 +1,984 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to GraphHopper GmbH under one or more contributor
+  ~ license agreements. See the NOTICE file distributed with this work for
+  ~ additional information regarding copyright ownership.
+  ~
+  ~ GraphHopper GmbH licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except in
+  ~ compliance with the License. You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<problem xmlns="http://www.w3schools.com"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3schools.com vrp_xml_schema.xsd">
+    <problemType>
+        <fleetSize>FINITE</fleetSize>
+        <fleetComposition>HOMOGENEOUS</fleetComposition>
+    </problemType>
+    <vehicles>
+        <vehicle>
+            <id>Terry</id>
+            <typeId>March</typeId>
+            <location>
+                <id>1</id>
+                <coord y="24.997798" x="121.487799"/>
+            </location>
+			<timeSchedule>
+                <start>0.0</start>
+                <end>28800.0</end>
+            </timeSchedule>
+        </vehicle>
+        <vehicle>
+            <id>Peter</id>
+            <typeId>March</typeId>
+            <location>
+                <id>1</id>
+                <coord y="24.997798" x="121.487799"/>
+            </location>
+			<timeSchedule>
+                <start>0.0</start>
+                <end>28800.0</end>
+            </timeSchedule>
+        </vehicle>
+        <vehicle>
+            <id>Fred</id>
+            <typeId>March</typeId>
+            <location>
+                <id>1</id>
+                <coord y="24.997798" x="121.487799"/>
+            </location>
+			<timeSchedule>
+                <start>0.0</start>
+                <end>28800.0</end>
+            </timeSchedule>
+        </vehicle>
+        <vehicle>
+            <id>Darwin</id>
+            <typeId>March</typeId>
+            <location>
+                <id>1</id>
+                <coord y="24.997798" x="121.487799"/>
+            </location>
+			<timeSchedule>
+                <start>0.0</start>
+                <end>28800.0</end>
+            </timeSchedule>
+        </vehicle>
+    </vehicles>
+    <vehicleTypes>
+		<type>
+            <id>Scooter</id>
+            <capacity>10</capacity>
+            <costs>
+				<fixed>10.0</fixed>
+                <distance>300.0</distance>
+				<time>1.0</time>
+				<service>1.0</service>
+				<wait>1.0</wait>
+            </costs>
+        </type>
+		<type>
+            <id>March</id>
+            <capacity>50</capacity>
+            <costs>
+				<fixed>200.0</fixed>
+                <distance>1000.0</distance>
+				<time>1.0</time>
+				<service>1.0</service>
+				<wait>1.0</wait>
+            </costs>
+        </type>
+        <type>
+            <id>Truck</id>
+            <capacity>1000</capacity>
+            <costs>
+				<fixed>1000.0</fixed>
+                <distance>1000.0</distance>
+				<time>1.0</time>
+				<service>1.0</service>
+				<wait>1.0</wait>
+            </costs>
+        </type>
+    </vehicleTypes>
+
+    <services>
+
+       <service id="220001">
+            <locationId>220001</locationId>
+            <coord y="25.026614" x="121.465244"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋民有店</name>
+        </service>
+
+        <service id="220002">
+            <locationId>220002</locationId>
+            <coord y="24.999032" x="121.442514"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣大興店</name>
+        </service>
+
+        <service id="220003">
+            <locationId>220003</locationId>
+            <coord y="25.009754" x="121.459729"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣府中店</name>
+        </service>
+
+        <service id="220004">
+            <locationId>220004</locationId>
+            <coord y="25.025147" x="121.469347"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣板莒店</name>
+        </service>
+
+        <service id="220005">
+            <locationId>220005</locationId>
+            <coord y="25.027039" x="121.461581"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣板玉店</name>
+        </service>
+
+        <service id="220006">
+            <locationId>220006</locationId>
+            <coord y="25.033329" x="121.479610"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富板橋民治店</name>
+        </service>
+
+        <service id="220007">
+            <locationId>220007</locationId>
+            <coord y="25.033187" x="121.474992"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣寶翠店</name>
+        </service>
+
+        <service id="220008">
+            <locationId>220008</locationId>
+            <coord y="25.007802" x="121.445834"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富板橋僑興店</name>
+        </service>
+
+        <service id="220009">
+            <locationId>220009</locationId>
+            <coord y="25.027247" x="121.477702"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富板橋文聖店</name>
+        </service>
+
+        <service id="220010">
+            <locationId>220010</locationId>
+            <coord y="24.997205" x="121.457201"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富板橋玉川店</name>
+        </service>
+
+        <service id="220011">
+            <locationId>220011</locationId>
+            <coord y="25.034047" x="121.478667"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富板橋民仁店</name>
+        </service>
+
+        <service id="220012">
+            <locationId>220012</locationId>
+            <coord y="25.002231" x="121.443877"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣板龍店</name>
+        </service>
+
+        <service id="220013">
+            <locationId>220013</locationId>
+            <coord y="25.027281" x="121.468792"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富板橋松翠店</name>
+        </service>
+
+        <service id="220014">
+            <locationId>220014</locationId>
+            <coord y="25.003114" x="121.454562"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富板橋華雅店</name>
+        </service>
+
+        <service id="220015">
+            <locationId>220015</locationId>
+            <coord y="25.022094" x="121.470397"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋民生店</name>
+        </service>
+
+        <service id="220016">
+            <locationId>220016</locationId>
+            <coord y="25.006990" x="121.445650"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋僑中店</name>
+        </service>
+
+        <service id="220017">
+            <locationId>220017</locationId>
+            <coord y="24.994541" x="121.449695"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋四川店</name>
+        </service>
+
+        <service id="220018">
+            <locationId>220018</locationId>
+            <coord y="25.031648" x="121.475553"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋仁化店</name>
+        </service>
+
+        <service id="220019">
+            <locationId>220019</locationId>
+            <coord y="25.001157" x="121.445809"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋大觀店</name>
+        </service>
+
+        <service id="220020">
+            <locationId>220020</locationId>
+            <coord y="24.994022" x="121.432577"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋沙崙店</name>
+        </service>
+
+        <service id="220021">
+            <locationId>220021</locationId>
+            <coord y="25.027181" x="121.459122"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋裕民店</name>
+        </service>
+
+        <service id="220022">
+            <locationId>220022</locationId>
+            <coord y="24.994199" x="121.461279"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋和平店</name>
+        </service>
+
+        <service id="220023">
+            <locationId>220023</locationId>
+            <coord y="25.015799" x="121.460747"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋民權店</name>
+        </service>
+
+        <service id="220024">
+            <locationId>220024</locationId>
+            <coord y="25.006740" x="121.469110"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋國泰店</name>
+        </service>
+
+        <service id="220025">
+            <locationId>220025</locationId>
+            <coord y="25.022950" x="121.479953"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋三民店</name>
+        </service>
+
+        <service id="220026">
+            <locationId>220026</locationId>
+            <coord y="25.021203" x="121.459759"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋公館店</name>
+        </service>
+
+        <service id="220027">
+            <locationId>220027</locationId>
+            <coord y="25.023963" x="121.472552"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋莒光店</name>
+        </service>
+
+        <service id="220028">
+            <locationId>220028</locationId>
+            <coord y="25.031706" x="121.467999"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋宏國店</name>
+        </service>
+
+        <service id="220029">
+            <locationId>220029</locationId>
+            <coord y="24.988890" x="121.425946"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋溪崑店</name>
+        </service>
+
+        <service id="220030">
+            <locationId>220030</locationId>
+            <coord y="25.003283" x="121.457206"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋貴興店</name>
+        </service>
+
+        <service id="220031">
+            <locationId>220031</locationId>
+            <coord y="25.029817" x="121.479727"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋懷德店</name>
+        </service>
+
+        <service id="220032">
+            <locationId>220032</locationId>
+            <coord y="25.005191" x="121.465162"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋實踐店</name>
+        </service>
+
+        <service id="220033">
+            <locationId>220033</locationId>
+            <coord y="24.999530" x="121.460225"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋仁愛店</name>
+        </service>
+
+        <service id="220034">
+            <locationId>220034</locationId>
+            <coord y="25.013220" x="121.473281"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋長安店</name>
+        </service>
+
+        <service id="220035">
+            <locationId>220035</locationId>
+            <coord y="25.001008" x="121.465808"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋重慶店</name>
+        </service>
+
+        <service id="220036">
+            <locationId>220036</locationId>
+            <coord y="25.032650" x="121.479461"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋民治店</name>
+        </service>
+
+        <service id="220037">
+            <locationId>220037</locationId>
+            <coord y="25.014993" x="121.455309"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋大智店</name>
+        </service>
+
+        <service id="220038">
+            <locationId>220038</locationId>
+            <coord y="25.017564" x="121.459939"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋建國店</name>
+        </service>
+
+        <service id="220039">
+            <locationId>220039</locationId>
+            <coord y="25.019537" x="121.468527"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋文化店</name>
+        </service>
+
+        <service id="220040">
+            <locationId>220040</locationId>
+            <coord y="25.018658" x="121.477198"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋懷仁店</name>
+        </service>
+
+        <service id="220041">
+            <locationId>220041</locationId>
+            <coord y="25.020302" x="121.455699"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋金華店</name>
+        </service>
+
+        <service id="220042">
+            <locationId>220042</locationId>
+            <coord y="25.033839" x="121.473784"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋文化二店</name>
+        </service>
+
+        <service id="220043">
+            <locationId>220043</locationId>
+            <coord y="25.021705" x="121.481986"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋中山三店</name>
+        </service>
+
+        <service id="220044">
+            <locationId>220044</locationId>
+            <coord y="25.009238" x="121.472275"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋漢生東店</name>
+        </service>
+
+        <service id="220045">
+            <locationId>220045</locationId>
+            <coord y="25.020755" x="121.471509"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋莊敬三店</name>
+        </service>
+
+        <service id="220046">
+            <locationId>220046</locationId>
+            <coord y="25.026037" x="121.457049"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋龍泉二店</name>
+        </service>
+
+        <service id="220047">
+            <locationId>220047</locationId>
+            <coord y="25.020539" x="121.483136"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社板橋中山二店</name>
+        </service>
+
+        <service id="234001">
+            <locationId>234001</locationId>
+            <coord y="25.013666" x="121.518421"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富永和永霖店</name>
+        </service>
+
+        <service id="234002">
+            <locationId>234002</locationId>
+            <coord y="25.008791" x="121.510925"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣永富店</name>
+		</service>
+
+        <service id="234003">
+            <locationId>234003</locationId>
+            <coord y="25.004479" x="121.517615"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富永和永寧店</name>
+        </service>
+
+        <service id="234004">
+            <locationId>234004</locationId>
+            <coord y="25.013738" x="121.512557"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和信義店</name>
+        </service>
+
+        <service id="234005">
+            <locationId>234005</locationId>
+            <coord y="25.007379" x="121.523081"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和福和店</name>
+        </service>
+
+        <service id="234006">
+            <locationId>234006</locationId>
+            <coord y="24.996239" x="121.515688"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和智光店</name>
+        </service>
+
+        <service id="234007">
+            <locationId>234007</locationId>
+            <coord y="24.999754" x="121.522503"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和得和店</name>
+        </service>
+
+        <service id="234008">
+            <locationId>234008</locationId>
+            <coord y="25.002867" x="121.520849"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和秀朗店</name>
+        </service>
+
+        <service id="234009">
+            <locationId>234009</locationId>
+            <coord y="25.014782" x="121.518427"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和竹林店</name>
+        </service>
+
+        <service id="234010">
+            <locationId>234010</locationId>
+            <coord y="25.013031" x="121.510592"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和保福店</name>
+        </service>
+
+        <service id="234011">
+            <locationId>234011</locationId>
+            <coord y="25.005190" x="121.508968"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和保平店</name>
+        </service>
+
+        <service id="234012">
+            <locationId>234012</locationId>
+            <coord y="24.998229" x="121.527022"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和成功店</name>
+        </service>
+
+        <service id="234013">
+            <locationId>234013</locationId>
+            <coord y="25.015297" x="121.509100"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和保安店</name>
+        </service>
+
+        <service id="234014">
+            <locationId>234014</locationId>
+            <coord y="25.008556" x="121.502200"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和仁愛店</name>
+        </service>
+
+        <service id="234015">
+            <locationId>234015</locationId>
+            <coord y="25.011203" x="121.517765"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和國光店</name>
+        </service>
+
+        <service id="234016">
+            <locationId>234016</locationId>
+            <coord y="25.005734" x="121.515259"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和安樂店</name>
+        </service>
+
+        <service id="234017">
+            <locationId>234017</locationId>
+            <coord y="24.997175" x="121.519395"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和民族店</name>
+        </service>
+
+        <service id="234018">
+            <locationId>234018</locationId>
+            <coord y="25.001454" x="121.525669"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和秀朗二店</name>
+        </service>
+
+        <service id="234019">
+            <locationId>234019</locationId>
+            <coord y="25.007393" x="121.511734"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社永和保平二店</name>
+        </service>
+		
+        <service id="235001">
+            <locationId>235001</locationId>
+            <coord y="24.999287" x="121.483811"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富中和連勝店</name>
+        </service>
+
+        <service id="235002">
+            <locationId>235002</locationId>
+            <coord y="25.000406" x="121.483724"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和新生店</name>
+        </service>
+
+        <service id="235003">
+            <locationId>235003</locationId>
+            <coord y="25.002773" x="121.482428"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和新生二店</name>
+        </service>
+
+        <service id="235004">
+            <locationId>235004</locationId>
+            <coord y="25.003584" x="121.505910"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣水源店</name>
+        </service>
+
+        <service id="235005">
+            <locationId>235005</locationId>
+            <coord y="24.993407" x="121.522223"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣和大店</name>
+        </service>
+
+        <service id="235006">
+            <locationId>235006</locationId>
+            <coord y="25.006843" x="121.489760"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富中和力德店</name>
+        </service>
+
+        <service id="235007">
+            <locationId>235007</locationId>
+            <coord y="25.011751" x="121.483630"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣飛和店</name>
+        </service>
+
+        <service id="235008">
+            <locationId>235008</locationId>
+            <coord y="24.998082" x="121.501866"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣和圓店</name>
+        </service>
+
+        <service id="235009">
+            <locationId>235009</locationId>
+            <coord y="25.001044" x="121.499817"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣和泰店</name>
+        </service>
+
+        <service id="235010">
+            <locationId>235010</locationId>
+            <coord y="25.007872" x="121.479521"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣員山店</name>
+        </service>
+
+        <service id="235011">
+            <locationId>235011</locationId>
+            <coord y="25.002714" x="121.492965"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣橋安店</name>
+        </service>
+
+        <service id="235012">
+            <locationId>235012</locationId>
+            <coord y="24.983887" x="121.504416"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣南勢店</name>
+        </service>
+
+        <service id="235013">
+            <locationId>235013</locationId>
+            <coord y="25.005151" x="121.501017"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和莊敬店</name>
+        </service>
+
+        <service id="235014">
+            <locationId>235014</locationId>
+            <coord y="24.992771" x="121.522801"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和自立店</name>
+        </service>
+
+        <service id="235015">
+            <locationId>235015</locationId>
+            <coord y="24.991695" x="121.502327"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和復興店</name>
+        </service>
+
+        <service id="235016">
+            <locationId>235016</locationId>
+            <coord y="24.991399" x="121.517543"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和景德店</name>
+        </service>
+
+        <service id="235017">
+            <locationId>235017</locationId>
+            <coord y="24.997462" x="121.482145"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和員山店</name>
+        </service>
+
+        <service id="235018">
+            <locationId>235018</locationId>
+            <coord y="25.005404" x="121.503649"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和中山店</name>
+        </service>
+
+        <service id="235019">
+            <locationId>235019</locationId>
+            <coord y="24.997360" x="121.504794"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和南華店</name>
+        </service>
+
+        <service id="235020">
+            <locationId>235020</locationId>
+            <coord y="24.992342" x="121.505803"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和和平店</name>
+        </service>
+
+        <service id="235021">
+            <locationId>235021</locationId>
+            <coord y="24.998187" x="121.498192"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和連勝店</name>
+        </service>
+
+        <service id="235022">
+            <locationId>235022</locationId>
+            <coord y="24.999200" x="121.480928"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和民利店</name>
+        </service>
+
+        <service id="235023">
+            <locationId>235023</locationId>
+            <coord y="24.991143" x="121.505022"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和南山店</name>
+        </service>
+
+        <service id="235024">
+            <locationId>235024</locationId>
+            <coord y="25.000388" x="121.473042"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和民享店</name>
+        </service>
+
+        <service id="235025">
+            <locationId>235025</locationId>
+            <coord y="24.996660" x="121.526286"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和秀朗店</name>
+        </service>
+
+        <service id="235026">
+            <locationId>235026</locationId>
+            <coord y="24.982398" x="121.507507"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和華新店</name>
+        </service>
+
+        <service id="235027">
+            <locationId>235027</locationId>
+            <coord y="24.998945" x="121.508666"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和保健店</name>
+        </service>
+
+        <service id="235028">
+            <locationId>235028</locationId>
+            <coord y="24.990129" x="121.492708"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和圓通店</name>
+        </service>
+
+        <service id="235029">
+            <locationId>235029</locationId>
+            <coord y="24.988486" x="121.514364"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和景新店</name>
+        </service>
+
+        <service id="235030">
+            <locationId>235030</locationId>
+            <coord y="24.995818" x="121.464708"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和華順店</name>
+        </service>
+
+        <service id="235031">
+            <locationId>235031</locationId>
+            <coord y="25.005650" x="121.490631"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣橋和二店</name>
+        </service>
+
+        <service id="235032">
+            <locationId>235032</locationId>
+            <coord y="25.009442" x="121.478146"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣員山二店</name>
+        </service>
+
+        <service id="235033">
+            <locationId>235033</locationId>
+            <coord y="24.995674" x="121.498236"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和圓通二店</name>
+        </service>
+
+        <service id="235034">
+            <locationId>235034</locationId>
+            <coord y="24.994925" x="121.483631"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和連城三店</name>
+        </service>
+
+        <service id="235035">
+            <locationId>235035</locationId>
+            <coord y="24.994223" x="121.516050"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和大勇二店</name>
+        </service>
+
+        <service id="235036">
+            <locationId>235036</locationId>
+            <coord y="24.998207" x="121.498180"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和連勝二店</name>
+        </service>
+
+        <service id="235037">
+            <locationId>235037</locationId>
+            <coord y="24.998349" x="121.502085"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和南山二店</name>
+        </service>
+
+        <service id="235038">
+            <locationId>235038</locationId>
+            <coord y="24.984908" x="121.506849"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和興南二店</name>
+        </service>
+
+        <service id="235039">
+            <locationId>235039</locationId>
+            <coord y="24.995257" x="121.465975"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和壽德二店</name>
+        </service>
+
+        <service id="235040">
+            <locationId>235040</locationId>
+            <coord y="24.983417" x="121.505075"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社中和興南三店</name>
+        </service>
+		
+		<service id="236001">
+            <locationId>236001</locationId>
+            <coord y="24.983503" x="121.453985"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富北縣城士店</name>
+        </service>
+
+        <service id="236002">
+            <locationId>236002</locationId>
+            <coord y="24.985412" x="121.445092"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富土城城央店</name>
+        </service>
+
+        <service id="236003">
+            <locationId>236003</locationId>
+            <coord y="24.988635" x="121.450883"/>
+            <capacity-demand>1</capacity-demand>
+            <name>萊爾富土城學成店</name>
+        </service>
+
+        <service id="236004">
+            <locationId>236004</locationId>
+            <coord y="24.982783" x="121.452907"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城學士店</name>
+        </service>
+
+        <service id="236005">
+            <locationId>236005</locationId>
+            <coord y="24.956392" x="121.414052"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城中央店</name>
+        </service>
+
+        <service id="236006">
+            <locationId>236006</locationId>
+            <coord y="24.975524" x="121.443974"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城中正店</name>
+        </service>
+
+        <service id="236007">
+            <locationId>236007</locationId>
+            <coord y="24.987341" x="121.448072"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城裕生店</name>
+        </service>
+
+        <service id="236008">
+            <locationId>236008</locationId>
+            <coord y="24.986959" x="121.452726"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城學成店</name>
+        </service>
+
+        <service id="236009">
+            <locationId>236009</locationId>
+            <coord y="24.979206" x="121.460077"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城青雲店</name>
+        </service>
+
+        <service id="236010">
+            <locationId>236010</locationId>
+            <coord y="24.983923" x="121.467333"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城延吉店</name>
+        </service>
+
+        <service id="236011">
+            <locationId>236011</locationId>
+            <coord y="24.964739" x="121.419173"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城福安店</name>
+        </service>
+
+        <service id="236012">
+            <locationId>236012</locationId>
+            <coord y="24.991357" x="121.453786"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城廣興店</name>
+        </service>
+
+        <service id="236013">
+            <locationId>236013</locationId>
+            <coord y="24.980571" x="121.441379"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城福祥店</name>
+        </service>
+
+        <service id="236014">
+            <locationId>236014</locationId>
+            <coord y="24.992605" x="121.467982"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城延平店</name>
+        </service>
+
+        <service id="236015">
+            <locationId>236015</locationId>
+            <coord y="24.974846" x="121.440167"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城中央二店</name>
+        </service>
+
+        <service id="236016">
+            <locationId>236016</locationId>
+            <coord y="24.972805" x="121.458910"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城青雲二店</name>
+        </service>
+
+        <service id="236017">
+            <locationId>236017</locationId>
+            <coord y="24.986088" x="121.469781"/>
+            <capacity-demand>1</capacity-demand>
+            <name>美廉社土城延吉三店</name>
+        </service>
+
+        <service id="236018">
+            <locationId>236018</locationId>
+            <coord y="24.958164" x="121.415082"/>
+            <capacity-demand>1</capacity-demand>
+            <name>大美超市土城中洲店</name>
+        </service>
+		
+    </services>
+</problem>

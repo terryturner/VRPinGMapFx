@@ -49,13 +49,7 @@
       		<Separator orientation="HORIZONTAL"/>
 			<Button fx:id="clearButton" mnemonicParsing="false" onAction="#HideTotal" text="HideTotal" />
 			<Separator orientation="HORIZONTAL"/>
-      		<Button fx:id="ShowA" mnemonicParsing="false" onAction="#ShowTotal" text="ShowTotal" />
-      		<Separator orientation="HORIZONTAL"/>
-      		<Button fx:id="ShowB" mnemonicParsing="false" onAction="#ShowA" text="ShowA" />
-      		<Separator orientation="HORIZONTAL"/>
-      		<Button fx:id="ShowC" mnemonicParsing="false" onAction="#ShowB" text="ShowB" />
-      		<Separator orientation="HORIZONTAL"/>
-      		<Button fx:id="ShowC" mnemonicParsing="false" onAction="#ShowC" text="ShowC" />  	
+      		<Button mnemonicParsing="false" onAction="#ShowTotal" text="ShowTotal" />
       		<Separator orientation="HORIZONTAL"/>
 		</VBox>
 	</left>

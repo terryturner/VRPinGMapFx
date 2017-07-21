@@ -1,13 +1,11 @@
 package com.goldtek.main.config;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.ResourceBundle;
 
 import com.goldtek.algorithm.Car;
 import com.goldtek.algorithm.CarModel;
-import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
-
+import com.goldtek.algorithm.VrpMaker;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -32,9 +30,7 @@ public class ConfigDialogController implements Initializable {
     @FXML protected Button AddVehicle;
     @FXML protected ListView<Car> VehicleList;
     
-    VehicleRoutingProblem.Builder mDefaultBuilder;
     ObservableList<Car> Cars = FXCollections.observableArrayList();
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -85,31 +81,22 @@ public class ConfigDialogController implements Initializable {
         }
     };
 
-    public void setBuilder(VehicleRoutingProblem.Builder builder) {
-        mDefaultBuilder = builder;
+    public void setBuilder() {
         initVehicleTypeBox();
         initVehicleList();
     }
     
-    public void updateVehicleList(VehicleRoutingProblem.Builder builder) {
-        for (Car car : Cars) {
-            for (CarModel model : VehicleTypeBox.getItems()) {
-                if (model.getVehicleType().getTypeId().equals(car.getModel())) {
-                    builder.addVehicle(car.toVehicle(model.getVehicleType()));
-                    break;
-                }
-            }
-        }
+    public void updateVehicleList() {
+        VrpMaker.getInstance().setCars(Cars);
     }
     
     private void initVehicleTypeBox() {
-        ObservableList<CarModel> CarModels = CarModel.toCarModelList(mDefaultBuilder.getAddedVehicleTypes());
-        VehicleTypeBox.setItems(CarModels);
+        VehicleTypeBox.setItems(VrpMaker.getInstance().getGoldenSampleCarModel());
         VehicleTypeBox.getSelectionModel().selectFirst();
     }
     
     private void initVehicleList() {
-        for (Car car : Car.toCarList(mDefaultBuilder.getAddedVehicles())) Cars.add(car);
+        for (Car car : VrpMaker.getInstance().getGoldenSampleCar()) Cars.add(car);
     }
 
 }
