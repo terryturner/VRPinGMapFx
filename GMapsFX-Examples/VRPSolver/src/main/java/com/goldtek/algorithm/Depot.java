@@ -6,6 +6,8 @@ public class Depot {
 	private final double mLongitude;
 	private final double mLatitude;
 	private final boolean mBelongCenter;
+	private String mCounty = null;
+	private String mArea = null;
 	private int mPickupCapacity = 0;
 	private int mDeliverCapacity = 0;
 	private String mNick = null;
@@ -16,6 +18,12 @@ public class Depot {
 	
     public Depot(String id, String name, double lng, double lat, int pickupNo, int deliverNo) {
         this(false, id, name, lng, lat, pickupNo, deliverNo);
+    }
+    
+    public Depot(String id, String county, String area, String name, double lng, double lat) {
+        this(false, id, name, lng, lat, 0, 0);
+        mCounty = county;
+        mArea = area;
     }
 	
 	public Depot(boolean isCenter, String id, String name, double lng, double lat) {
@@ -45,6 +53,10 @@ public class Depot {
 	public int getPickupCapacity() { return mPickupCapacity; }
 	
 	public int getDeliverCapacity() { return mDeliverCapacity; }
+	
+	public String getCounty() { return mCounty; }
+	
+	public String getArea() { return mArea; }
 	
 	public void setNickName(String name) {
 		mNick = name;

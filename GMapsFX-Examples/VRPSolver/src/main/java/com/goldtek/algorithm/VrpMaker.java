@@ -6,6 +6,7 @@ import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem.FleetSize;
 import com.graphhopper.jsprit.core.problem.job.Job;
 import com.graphhopper.jsprit.core.problem.job.Service;
+import com.graphhopper.jsprit.core.problem.vehicle.Vehicle;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
 import com.graphhopper.jsprit.io.problem.VrpXMLReader;
 import com.graphhopper.jsprit.io.problem.VrpXMLWriter;
@@ -37,11 +38,19 @@ public class VrpMaker {
     }
     
     public ObservableList<CarModel> getGoldenSampleCarModel() {
-        return CarModel.toCarModelList(mGoldenSampleBuilder.getAddedVehicleTypes());
+        ObservableList<CarModel> CarModels = FXCollections.observableArrayList();
+        for (VehicleType type : mGoldenSampleBuilder.getAddedVehicleTypes()) {
+            CarModels.add(new CarModel(type));
+        }
+        return CarModels;
     }
     
     public ObservableList<Car> getGoldenSampleCar() {
-        return Car.toCarList(mGoldenSampleBuilder.getAddedVehicles());
+        ObservableList<Car> Cars = FXCollections.observableArrayList();
+        for (Vehicle vehicle : mGoldenSampleBuilder.getAddedVehicles()) {
+            Cars.add(new Car(vehicle));
+        }
+        return Cars;
     }
     
     public ObservableList<Depot> getGoldenSampleDepot() {

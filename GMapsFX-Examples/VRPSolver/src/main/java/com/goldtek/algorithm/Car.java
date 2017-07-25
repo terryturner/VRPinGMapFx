@@ -1,15 +1,10 @@
 package com.goldtek.algorithm;
 
-import java.util.Collection;
-
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.vehicle.Vehicle;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
 import com.graphhopper.jsprit.core.util.Coordinate;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl.Builder;
 
@@ -70,12 +65,5 @@ public class Car {
         VehicleImpl vehicle = vehicleBuilder.build();
         return vehicle;
 	}
-	
-	public static ObservableList<Car> toCarList(Collection<Vehicle> list) {
-	    ObservableList<Car> Cars = FXCollections.observableArrayList();
-	    for (Vehicle vehicle : list) {
-	        Cars.add(new Car(vehicle));
-	    }
-	    return Cars;
-	}
+
 }

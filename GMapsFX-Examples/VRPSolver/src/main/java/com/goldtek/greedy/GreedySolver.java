@@ -103,7 +103,7 @@ public class GreedySolver extends JspritSolver {
         updateCenter();
         return mShowRoutes;
     }
-    
+
     private List<Route> finiteFleet(VehicleRoutingTransportCosts costs) {
         List<ConsiderJob> greedyRoute = greedyRoute(costs, mVrpBuilder.getAddedVehicles().iterator().next());
         mShowRoutes.clear();
@@ -149,6 +149,7 @@ public class GreedySolver extends JspritSolver {
             
             if (vehicleRoute.getDepots().size() > 0) mShowRoutes.add(vehicleRoute);
         });
+        
         updateCenter();
         return mShowRoutes;
     }
@@ -203,90 +204,4 @@ public class GreedySolver extends JspritSolver {
         return greedyJobs;
     }
 
-    private List<Route> finiteFleet3(VehicleRoutingTransportCosts costs) {
-        List<ConsiderJob> jobs = new ArrayList<>();
-        mShowRoutes.clear();
-
-        for (Job job : mVrpBuilder.getAddedJobs()) {
-            jobs.add(new ConsiderJob(job));
-        }
-
-        int index = 0;
-        for (Vehicle vehicle : mVrpBuilder.getAddedVehicles()) {
-            final int capacity = vehicle.getType().getCapacityDimensions().get(0);
-            Route vehicleRoute = new Route(index++);
-            int curDeliverAmount = capacity;
-            int curPickupAmount = 0;
-            Location from = vehicle.getStartLocation();
-
-            for (ConsiderJob job : jobs)
-                job.isConsiderable(true); // initialize
-
-            boolean isTrasportable = true;
-            while (isTrasportable) {
-                double leastCost = Double.MAX_VALUE;
-                int which = -1;
-                for (int idx = 0; idx < jobs.size(); idx++) {
-                    ConsiderJob job = jobs.get(idx);
-
-                    if (jobs.get(idx).isConsiderable() && jobs.get(idx).get() instanceof Service) {
-                        int jobAmount = job.get().getSize().get(0);
-                        double transCost = costs.getTransportCost(from, ((Service) job.get()).getLocation(), 0., null,
-                                vehicle);
-                        if ((job.get() instanceof Delivery && curDeliverAmount >= jobAmount && transCost < leastCost)
-                                || (job.get() instanceof Pickup && (curPickupAmount + jobAmount) <= capacity && transCost < leastCost)) {
-                            leastCost = transCost;
-                            which = idx;
-                        } else if ((job.get() instanceof Delivery && curDeliverAmount < jobAmount)
-                                || (job.get() instanceof Pickup && (curPickupAmount + jobAmount) > capacity)) {
-                            job.isConsiderable(false);
-                        }
-                    } else {
-                        job.isConsiderable(false);
-                    }
-                }
-                // should get acceptable one
-                if (which != -1) {
-                    Service service = (Service) jobs.get(which).get();
-                    int serviceAmount = service.getSize().get(0);
-
-                    if (service instanceof Delivery)
-                        curDeliverAmount -= serviceAmount;
-                    else if (service instanceof Pickup)
-                        curPickupAmount += serviceAmount;
-                    from = service.getLocation();
-                    jobs.get(which).isConsiderable(false);
-
-                    Depot depot;
-                    if (vehicleRoute.getLastDepot() != null
-                            && vehicleRoute.getLastDepot().getLocationID().equals(service.getLocation().getId())) {
-                        depot = vehicleRoute.getLastDepot();
-                    } else {
-                        depot = new Depot(service.getLocation().getId(), service.getName(),
-                                service.getLocation().getCoordinate().getX(),
-                                service.getLocation().getCoordinate().getY());
-                        vehicleRoute.addDepot(depot);
-                    }
-                    if (service instanceof Delivery)
-                        depot.setDeliverCapacity(serviceAmount);
-                    else if (service instanceof Pickup)
-                        depot.setPickupCapacity(serviceAmount);
-
-                    //System.out.println("go to " + service.getName());
-                } else {
-                    System.out.println("there's no next");
-                }
-
-                isTrasportable = false;
-                for (ConsiderJob job : jobs) {
-                    if (job.isConsiderable())
-                        isTrasportable = true;
-                }
-            }
-            if (vehicleRoute.getDepots().size() > 0)
-                mShowRoutes.add(vehicleRoute);
-        }
-
-        return mShowRoutes;
-    }
 }

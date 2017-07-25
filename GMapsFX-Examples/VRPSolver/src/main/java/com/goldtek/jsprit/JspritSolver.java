@@ -6,10 +6,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
+import com.goldtek.algorithm.Cost;
 import com.goldtek.algorithm.Depot;
 import com.goldtek.algorithm.IVrpSolver;
+import com.goldtek.algorithm.RelationKey;
 import com.goldtek.algorithm.Route;
 import com.graphhopper.jsprit.core.algorithm.VehicleRoutingAlgorithm;
 import com.graphhopper.jsprit.core.algorithm.box.Jsprit;
@@ -29,6 +32,7 @@ import com.graphhopper.jsprit.io.problem.VrpXMLReader;
 public class JspritSolver implements IVrpSolver {
 	protected static IVrpSolver sInstance = null;
 	protected VehicleRoutingProblem.Builder mVrpBuilder = VehicleRoutingProblem.Builder.newInstance();
+	protected VehicleRoutingTransportCostsMatrix mCostMatrix = null;
 	protected VehicleRoutingProblem mVRP = null;
 	protected List<Route> mShowRoutes = new ArrayList<>();
 	protected List<Depot> mCenterList = new ArrayList<>();
@@ -48,6 +52,7 @@ public class JspritSolver implements IVrpSolver {
 	public void reset() {
 		mVrpBuilder = VehicleRoutingProblem.Builder.newInstance();
 		mVRP = null;
+		mCostMatrix = null;
 	}
 
 	@Override
@@ -76,10 +81,23 @@ public class JspritSolver implements IVrpSolver {
     		ex.printStackTrace();
     	}
     	
-    	VehicleRoutingTransportCostsMatrix matrix = matrixBuilder.build();
-    	
-    	//TODO: mapping all matrix with mVrpBuilder service stop
-    	mVrpBuilder.setRoutingCost(matrix);
+    	mCostMatrix = matrixBuilder.build();
+	}
+	
+	@Override
+	public void costFrom(List<Cost> list) {
+	    if (list == null) {
+	        mCostMatrix = null;
+	        return;
+	    }
+	    
+	    VehicleRoutingTransportCostsMatrix.Builder matrixBuilder = VehicleRoutingTransportCostsMatrix.Builder.newInstance(false);
+	    //HashMap<RelationKey, Double> distances = new HashMap<>();
+	    for (Cost cost : list) {
+	        //System.out.println(cost.getKey().from + " to " + cost.getKey().to + " => " + cost.getCost());
+	        matrixBuilder.addTransportDistance(cost.getKey().from, cost.getKey().to, cost.getCost());
+	    }
+	    mCostMatrix = matrixBuilder.build();
 	}
 
 	
@@ -124,6 +142,9 @@ public class JspritSolver implements IVrpSolver {
 
 	@Override
 	public List<Route> solve(int iterations) {
+	    // TODO: mapping all matrix with mVrpBuilder service stop
+	    if (mCostMatrix != null) mVrpBuilder.setRoutingCost(mCostMatrix);
+	    
 		mVRP = mVrpBuilder.build();
 		VehicleRoutingAlgorithm algorithm = Jsprit.createAlgorithm(mVRP);
     	algorithm.setMaxIterations(iterations);

@@ -16,9 +16,8 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
 
-import com.goldtek.algorithm.ColorfulDepot;
-import com.goldtek.algorithm.ColorfulDepot.ListViewID;
 import com.goldtek.algorithm.Depot;
+import com.goldtek.main.routeguide.ColorfulDepot.ListViewID;
 
 public class RouteGuidItem extends ListCell<ColorfulDepot> {
 	@FXML

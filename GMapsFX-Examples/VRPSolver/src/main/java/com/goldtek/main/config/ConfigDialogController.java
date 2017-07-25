@@ -58,8 +58,6 @@ public class ConfigDialogController implements Initializable {
     private EventHandler<ActionEvent> ActionEventHandler = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-            VehicleDriverInput.getText();
-            
             for (Car car : Cars) {
                 if (car.getName().equalsIgnoreCase(VehicleDriverInput.getText())) {
                     return;

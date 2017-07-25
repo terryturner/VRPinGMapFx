@@ -2,20 +2,12 @@ package com.goldtek.main;
 
 import com.goldtek.jsprit.JspritSolver;
 import com.goldtek.main.config.ConfigDialog;
-import com.goldtek.main.routeguide.RouteColor;
-import com.goldtek.main.routeguide.RouteLabel;
-import com.google.maps.DistanceMatrixApi;
-import com.google.maps.GeoApiContext;
-import com.google.maps.errors.ApiException;
-import com.google.maps.model.DistanceMatrix;
-import com.google.maps.model.DistanceMatrixElement;
 import com.lynden.gmapsfx.GoogleMapView;
 import com.lynden.gmapsfx.MapComponentInitializedListener;
 import com.lynden.gmapsfx.javascript.object.*;
 import com.lynden.gmapsfx.service.directions.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +20,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.util.Callback;
 import com.goldtek.main.routeguide.*;
+import com.goldtek.main.routeguide.ColorfulDepot.ListViewID;
 import com.goldtek.algorithm.*;
-import com.goldtek.algorithm.ColorfulDepot.ListViewID;
-//---------
+import com.goldtek.database.DbManager;
+import com.goldtek.database.IDbCallback;
 
 public class MainFXMLController
 		implements Initializable, MapComponentInitializedListener, DirectionsServiceCallback {
@@ -47,12 +41,15 @@ public class MainFXMLController
 
 	protected ObservableList<ColorfulDepot> mCurrentRouteGuide = FXCollections.observableArrayList();
 	protected List<Route> mSaveRoutes = new ArrayList<>();
+	protected List<Cost> mCostRoutes = new ArrayList<>();
 	protected IVrpSolver mSolver = JspritSolver.getInstance();
 
 	@FXML protected BorderPane RootPane;
 	@FXML protected GoogleMapView mapView;
 	@FXML protected ListView<ColorfulDepot> RouteGuide;
 	@FXML protected MenuButton MenuButton;
+	
+	private WorkIndicatorDialog<Boolean> mProgress = null;
 
 	@FXML
 	private void handleMenu(ActionEvent event) {
@@ -65,6 +62,33 @@ public class MainFXMLController
 		    ConfigDialog dialog = new ConfigDialog(RootPane.getScene().getWindow());
 			dialog.show();
 			break;
+		case "MenuCostAssist":
+		    if (item instanceof CheckMenuItem && ((CheckMenuItem)item).isSelected()) {
+		        mProgress = new WorkIndicatorDialog<>(RootPane.getScene().getWindow(), "Enable the Assistant...");
+		        mProgress.addTaskEndNotification(result -> {
+		            if (result == 0) {
+		                ((CheckMenuItem)item).setSelected(false);
+		                Alert alert = new Alert(AlertType.WARNING);
+		                alert.setTitle("Warning");
+		                alert.setHeaderText(null);
+		                alert.setContentText("Cannot enable the cost assistant, please try again later !");
+
+		                alert.showAndWait();
+		            }
+		        });
+		        mProgress.exec(Boolean.FALSE, inputParam -> {
+		            getCost();
+		            while (mProgress.isVisible()) {
+		                try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+		            }
+		            return new Integer(mProgress.isException() ? 0 : 1);
+		        });
+		    }
+		    break;
 		default:
 			break;
 		}
@@ -102,18 +126,9 @@ public class MainFXMLController
 		}
 	}
 
-	private void clearAll() {
-		mapView.getMap().clearMarkers();
-		for (GMapLine lines : mGMapLineList) {
-			DirectionsRenderer render = lines.getRoute();
-			render.clearDirections();
-		}
-		mGMapLineList.clear(); // clear any route markers
-	}
-
 	@FXML
 	private void testAction(ActionEvent event) {
-	    String inputPath = "input/zhonghe_test.xml";
+	    String inputPath = "config.xml";
 		clearAll();
 		
 		if (!FileHandle.getInstance().isExists(inputPath)) {
@@ -122,16 +137,15 @@ public class MainFXMLController
 		    else inputPath = file.getPath();
 		}
 
-		// IVrpSolver solver = JspritSolver.getInstance();
-		// IVrpSolver solver = GreedySolver.getInstance();
 		mSolver.reset();
 		mSolver.inputFrom(inputPath);
-		List<Route> routes = mSolver.solve(20);
-		mSaveRoutes = mSolver.solve(20);
-		for (Route line : routes) { // add English route label to array list
-			mMenuButtonText.add("Route" + RouteLabel.getInstance().get(routes.indexOf(line)));
+		if (mCostRoutes.size() > 0) {
+		    System.out.println("set cost");
+		    mSolver.costFrom(mCostRoutes);
 		}
-		afterSolve(mSolver, routes);
+		mSaveRoutes = mSolver.solve(20);
+
+		afterSolve(mSolver, mSaveRoutes);
 		updateMenubutton();
 	}
 
@@ -142,6 +156,7 @@ public class MainFXMLController
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		mapView.addMapInializedListener(this);
+		DbManager.getInstance();
 	}
 
 	@Override
@@ -156,30 +171,12 @@ public class MainFXMLController
 		mDirectionsPane = mapView.getDirec();
 	}
 
-	public void getduration(String[] waypoints) {
-		GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyCBczmGGGZSij3NsT3kACmZc7fbuKJ7yeI");
-		try {
-			DistanceMatrix matrix = DistanceMatrixApi.getDistanceMatrix(context, waypoints, waypoints).await();
-
-			for (int i = 0; i < matrix.originAddresses.length; i++) {
-				DistanceMatrixElement[] dm = matrix.rows[i].elements;
-				for (int j = 0; j < dm.length; j++) {
-					System.out.println(String.format("%s ===TO=== %s => %s --- %s", matrix.originAddresses[i],
-							matrix.destinationAddresses[j], dm[j].duration.humanReadable,
-							dm[j].distance.humanReadable));
-				}
-			}
-		} catch (ApiException | InterruptedException | IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-
 	private void afterSolve(IVrpSolver solver, List<Route> routes) {
 		if (routes != null) {
 			for (Route route : routes) {
 			    int index = routes.indexOf(route);
 				drawDriections(solver.getCenter(index), solver.getCenter(index), route);
+				mMenuButtonText.add("Route" + RouteLabel.getInstance().get(index));
 			}
 
             mCurrentRouteGuide.clear();
@@ -198,6 +195,15 @@ public class MainFXMLController
 		}
 	}
 
+    private void clearAll() {
+        mapView.getMap().clearMarkers();
+        for (GMapLine lines : mGMapLineList) {
+            DirectionsRenderer render = lines.getRoute();
+            render.clearDirections();
+        }
+        mGMapLineList.clear(); // clear any route markers
+    }
+	   
 	private void drawDriections(Depot start, Depot end, Route route) {
         GMapLine LineMarkers = new GMapLine();
         DirectionsRequest request = null;
@@ -254,23 +260,23 @@ public class MainFXMLController
         MenuButton.setText("Options");
     }
 
-    private void MenuButton_Showitem(int idint, boolean clear) {
+    private void MenuButton_Showitem(int index, boolean clear) {
         if (clear) mCurrentRouteGuide.clear();
 
-        ColorfulDepot startdepot = new ColorfulDepot(idint, mSolver.getCenter(idint), ListViewID.START);
+        ColorfulDepot startdepot = new ColorfulDepot(index, mSolver.getCenter(index), ListViewID.START);
         mCurrentRouteGuide.add(startdepot);
-        for (Depot depot : mSaveRoutes.get(idint).getDepots()) {
-            ColorfulDepot pointdepot = new ColorfulDepot(idint, depot, ListViewID.WAYPOINT);
-            pointdepot.setDepotPoint(mSaveRoutes.get(idint).getDepots().indexOf(depot));
+        for (Depot depot : mSaveRoutes.get(index).getDepots()) {
+            ColorfulDepot pointdepot = new ColorfulDepot(index, depot, ListViewID.WAYPOINT);
+            pointdepot.setDepotPoint(mSaveRoutes.get(index).getDepots().indexOf(depot));
             mCurrentRouteGuide.add(pointdepot);
         }
-        ColorfulDepot enddepot = new ColorfulDepot(idint, mSolver.getCenter(idint), ListViewID.END);
+        ColorfulDepot enddepot = new ColorfulDepot(index, mSolver.getCenter(index), ListViewID.END);
         mCurrentRouteGuide.add(enddepot);
     }
 
-    private void MenuButton_ShowRoute(int idint) {
+    private void MenuButton_ShowRoute(int index) {
         for (int i = 0; i < mGMapLineList.size(); i++) {
-            if (i == idint) {
+            if (i == index) {
                 if (mGMapLineList.get(i).getVisible() == false) {
                     DirectionsRenderer render = mGMapLineList.get(i).getRoute();
                     render.setMap(mapView.getMap()); // show lines
@@ -294,6 +300,31 @@ public class MainFXMLController
                 }
             }
         }
+    }
+    
+    private void getPalmBox() {
+        DbManager.getInstance().getPalmBox(new IDbCallback<Depot>() {
+            @Override
+            public void onQuery(List<Depot> list) {
+                for (Depot depot : list)
+                    System.out.println(depot.getName());
+            }
+        });
+    }
+    
+    private void getCost() {
+        DbManager.getInstance().getGmapCost(new IDbCallback<Cost>() {
+            @Override
+            public void onQuery(List<Cost> list) {
+                if (mProgress != null) {
+                    if (list != null) {
+                        mProgress.setResult(true);
+                        mCostRoutes = list;
+                    }
+                    else mProgress.setResult(false);
+                }
+            }
+        });
     }
 
     private EventHandler<ActionEvent> MenuButtonAction = new EventHandler<ActionEvent>() {
