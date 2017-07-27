@@ -52,14 +52,14 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
         Dialog.getDialogPane().setPrefSize(600, 480);
         
         String inputPath = "input/goldtek_golden_sample.xml";
-        if (!FileHandle.getInstance().isExists(inputPath))
+        if (!mVrpMaker.intialized())
         {
             File file = FileHandle.getInstance().showXMLChooser(mWindow);
             if (file == null) return;
             else inputPath = file.getPath();
+            mVrpMaker.readForGoldenSample(inputPath);
         }
 
-        mVrpMaker.readForGoldenSample(inputPath);
         mController.setBuilder();
     }
     
@@ -70,8 +70,7 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
     @Override
     public Boolean call(ButtonType buttonType) {
         if (buttonType == mConfirmButton) {
-            mController.updateVehicleList();
-            mVrpMaker.buildFiniteSize();
+            mVrpMaker.buildFiniteSize(mController.getAddedVehicles(), mController.getAddedDepots());
             return true;
         } else if (buttonType == mCancelButton) {
             System.exit(0);

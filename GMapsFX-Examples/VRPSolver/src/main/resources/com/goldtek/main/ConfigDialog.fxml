@@ -58,22 +58,40 @@
         <content>
           <AnchorPane>
                <children>
-                  <TabPane tabClosingPolicy="UNAVAILABLE">
+                  <TabPane fx:id="ServiceTab" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                      <Tab text="中和區">
+                      <Tab text="板橋區" id="220">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
-                                    <ListView fx:id="ServicePane1" prefHeight="260.0" prefWidth="570.0" />
+                                    <ListView fx:id="ServiceListBanqiao" prefHeight="260.0" prefWidth="570.0" />
                                  </children>
                               </AnchorPane>
                         </content>
                       </Tab>
-                      <Tab text="板橋區">
+                      <Tab text="永和區" id="234">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
-                                    <ListView fx:id="ServicePane2" prefHeight="260.0" prefWidth="570.0" />
+                                    <ListView fx:id="ServiceListYonghe" prefHeight="260.0" prefWidth="570.0" />
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                      <Tab text="中和區" id="235">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0">
+                                 <children>
+                                    <ListView fx:id="ServiceListZhonghe" prefHeight="260.0" prefWidth="570.0" />
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                      <Tab text="土城區" id="236">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0">
+                                 <children>
+                                    <ListView fx:id="ServiceListTucheng" prefHeight="260.0" prefWidth="570.0" />
                                  </children>
                               </AnchorPane>
                         </content>

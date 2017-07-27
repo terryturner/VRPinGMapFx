@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+
+
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefWidth="80.0">
+          <children>
+            <HBox>
+               <children>
+                    <CheckBox fx:id="Select" />
+                    <Text fx:id="Name" />
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                    <Text text="預計送貨量" />
+                    <TextField fx:id="Deliver" editable="true" />
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                    <Text text="預計取貨量" />
+                    <TextField fx:id="Pickup" editable="true" />
+               </children>
+            </HBox>
+          </children>
+      </VBox>
+   </children>
+</StackPane>

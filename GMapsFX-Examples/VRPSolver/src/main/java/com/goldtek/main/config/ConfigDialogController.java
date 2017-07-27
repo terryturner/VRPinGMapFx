@@ -1,10 +1,13 @@
 package com.goldtek.main.config;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.goldtek.algorithm.Car;
 import com.goldtek.algorithm.CarModel;
+import com.goldtek.algorithm.Depot;
 import com.goldtek.algorithm.VrpMaker;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +20,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
@@ -28,9 +33,17 @@ public class ConfigDialogController implements Initializable {
     @FXML protected ChoiceBox<CarModel> VehicleTypeBox;
     @FXML protected TextField VehicleDriverInput;
     @FXML protected Button AddVehicle;
-    @FXML protected ListView<Car> VehicleList;
     
-    ObservableList<Car> Cars = FXCollections.observableArrayList();
+    @FXML protected TabPane ServiceTab;
+    @FXML protected ListView<Car> VehicleList;
+    @FXML protected ListView<ConfigDepot> ServiceListBanqiao;
+    @FXML protected ListView<ConfigDepot> ServiceListYonghe;
+    @FXML protected ListView<ConfigDepot> ServiceListZhonghe;
+    @FXML protected ListView<ConfigDepot> ServiceListTucheng;
+    
+    private ObservableList<Car> Cars = FXCollections.observableArrayList();
+    private ObservableList<ConfigDepot> Depots = FXCollections.observableArrayList();
+    private List<ConfigDepot> AllDepots = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -53,6 +66,27 @@ public class ConfigDialogController implements Initializable {
         
         VehicleList.setItems(Cars);
         VehicleList.setCellFactory(param -> new ConfigCellCar(MouseEventHandler));
+        
+        ServiceListBanqiao.setItems(Depots);
+        ServiceListYonghe.setItems(Depots);
+        ServiceListZhonghe.setItems(Depots);
+        ServiceListTucheng.setItems(Depots);
+        ServiceListBanqiao.setCellFactory(param -> new ConfigCellDepot());
+        ServiceListYonghe.setCellFactory(param -> new ConfigCellDepot());
+        ServiceListZhonghe.setCellFactory(param -> new ConfigCellDepot());
+        ServiceListTucheng.setCellFactory(param -> new ConfigCellDepot());
+
+        ServiceTab.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+            @Override
+            public void changed(ObservableValue<? extends Tab> ob, Tab oldTab, Tab newTab) {
+                System.out.println(newTab.getId());
+                Depots.clear();
+                for (ConfigDepot depot : AllDepots) {
+                    if (depot.getAreaNumber().equals(newTab.getId()))
+                        Depots.add(depot);
+                }
+            }
+        });
     }
     
     private EventHandler<ActionEvent> ActionEventHandler = new EventHandler<ActionEvent>() {
@@ -82,10 +116,31 @@ public class ConfigDialogController implements Initializable {
     public void setBuilder() {
         initVehicleTypeBox();
         initVehicleList();
+        
+        for(Depot depot : VrpMaker.getInstance().getGoldenSampleDepot()) {
+            AllDepots.add(new ConfigDepot(depot));
+        }
+        
+        Depots.clear();
+        for (ConfigDepot depot : AllDepots) {
+            if (depot.getAreaNumber().equals("220"))
+                Depots.add(depot);
+        }
     }
     
-    public void updateVehicleList() {
-        VrpMaker.getInstance().setCars(Cars);
+    public ObservableList<Car> getAddedVehicles() {
+        return Cars;
+    }
+    
+    public List<Depot> getAddedDepots() {
+        List<Depot> Depots = new ArrayList<>();
+        for (ConfigDepot depot : AllDepots) {
+            if (depot.onProperty().get()) {
+                //System.out.println(depot.toString());
+                Depots.add(depot);
+            }
+        }
+        return Depots;
     }
     
     private void initVehicleTypeBox() {

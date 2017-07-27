@@ -2,6 +2,8 @@ package com.goldtek.main;
 
 import java.net.URL;
 
+import com.goldtek.main.config.ConfigDialog;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,7 +25,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-    	Parent root = FXMLLoader.load(getClass().getResource("/com/goldtek/main/Scene2.fxml"));
+    	Parent root = FXMLLoader.load(getClass().getResource("/com/goldtek/main/Scene.fxml"));
         Scene scene = new Scene(root);
         stage.setFullScreen(false);
         stage.setMaximized(false);  //set default is max windows.
@@ -31,10 +33,8 @@ public class MainApp extends Application {
 //        stage.initStyle(StageStyle.DECORATED);//default
 //        stage.initStyle(StageStyle.UTILITY); //set windows style
 
-        
         scene.setFill(Color.BLACK);
         scene.getStylesheets().add("/styles/Styles.css");
-
         
         stage.setTitle("Goldtek VRP Solver");
         stage.setScene(scene);

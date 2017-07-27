@@ -12,6 +12,12 @@ public class Depot {
 	private int mDeliverCapacity = 0;
 	private String mNick = null;
 	
+	public Depot(Depot depot) {
+	    this(false, depot.getLocationID(), depot.getName(), depot.getLongitude(), depot.getLatitude(), depot.getPickupCapacity(), depot.getDeliverCapacity());
+	    mCounty = depot.getCounty();
+	    mArea = depot.getArea();
+	}
+	
 	public Depot(String id, String name, double lng, double lat) {
 		this(false, id, name, lng, lat, 0, 0);
 	}
@@ -68,6 +74,10 @@ public class Depot {
 	
 	public void setDeliverCapacity(int capacity) {
 		mDeliverCapacity = capacity;
+	}
+	
+	public String getAreaNumber() {
+	    return mLocationID.substring(0, 3);
 	}
 	
 	public String toLatLongString() {
