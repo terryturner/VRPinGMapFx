@@ -7,20 +7,27 @@ import com.lynden.gmapsfx.MapComponentInitializedListener;
 import com.lynden.gmapsfx.javascript.object.*;
 import com.lynden.gmapsfx.service.directions.*;
 
+import ch.qos.logback.core.joran.action.Action;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import com.goldtek.main.routeguide.*;
 import com.goldtek.main.routeguide.ColorfulDepot.ListViewID;
@@ -45,9 +52,10 @@ public class MainFXMLController
 	protected IVrpSolver mSolver = JspritSolver.getInstance();
 
 	@FXML protected BorderPane RootPane;
-	@FXML protected GoogleMapView mapView;
+	@FXML protected GoogleMapView MapView;
 	@FXML protected ListView<ColorfulDepot> RouteGuide;
 	@FXML protected MenuButton MenuButton;
+	@FXML protected CheckMenuItem MenuCostAssist;
 	
 	private WorkIndicatorDialog<Boolean> mProgress = null;
 
@@ -62,31 +70,61 @@ public class MainFXMLController
 		    ConfigDialog dialog = new ConfigDialog(RootPane.getScene().getWindow());
 			dialog.show();
 			break;
-		case "MenuCostAssist":
-		    if (item instanceof CheckMenuItem && ((CheckMenuItem)item).isSelected()) {
-		        mProgress = new WorkIndicatorDialog<>(RootPane.getScene().getWindow(), "Enable the Assistant...");
-		        mProgress.addTaskEndNotification(result -> {
-		            if (result == 0) {
-		                ((CheckMenuItem)item).setSelected(false);
-		                Alert alert = new Alert(AlertType.WARNING);
-		                alert.setTitle("Warning");
-		                alert.setHeaderText(null);
-		                alert.setContentText("Cannot enable the cost assistant, please try again later !");
+	     case "MenuStart":
+	         String inputPath = "config.xml";
+	         clearAll();
+	         
+	         if (!FileHandle.getInstance().isExists(inputPath)) {
+	             File file = FileHandle.getInstance().showXMLChooser(RootPane.getScene().getWindow());
+	             if (file == null) return;
+	             else inputPath = file.getPath();
+	         }
 
-		                alert.showAndWait();
-		            }
-		        });
-		        mProgress.exec(Boolean.FALSE, inputParam -> {
-		            getCost();
-		            while (mProgress.isVisible()) {
-		                try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+             mSolver.reset();
+             mSolver.inputFrom(inputPath);
+
+	         mProgress = new WorkIndicatorDialog<>(RootPane.getScene().getWindow(), "Processing VRP");
+	         mProgress.exec(Boolean.FALSE, inputParam -> {
+	             if (mCostRoutes.size() > 0 && MenuCostAssist.isSelected()) {
+	                 System.out.println("set cost");
+	                 mSolver.costFrom(mCostRoutes);
+	             }
+	             mSaveRoutes = mSolver.solve(2000);
+	             return new Integer(1);
+	         });
+	         mProgress.addTaskEndNotification(result -> {
+	             afterSolve(mSolver, mSaveRoutes);
+	             updateMenubutton();
+	         });
+
+	         break;
+		case "MenuCostAssist":
+		    if (item instanceof CheckMenuItem && MenuCostAssist.isSelected()) {
+                if (mCostRoutes.size() == 0) {
+                    mProgress = new WorkIndicatorDialog<>(RootPane.getScene().getWindow(), "Enable the Assistant...");
+                    mProgress.addTaskEndNotification(result -> {
+                        if (result == 0) {
+                            ((CheckMenuItem) item).setSelected(false);
+                            Alert alert = new Alert(AlertType.WARNING);
+                            alert.setTitle("Warning");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Cannot enable the cost assistant, please try again later !");
+
+                            alert.showAndWait();
                         }
-		            }
-		            return new Integer(mProgress.isException() ? 0 : 1);
-		        });
+                    });
+                    mProgress.exec(Boolean.FALSE, inputParam -> {
+                        getCost();
+                        while (mProgress.isVisible()) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return new Integer(mProgress.isException() ? 0 : 1);
+                    });
+                }
 		    }
 		    break;
 		default:
@@ -103,7 +141,7 @@ public class MainFXMLController
 
 				List<Marker> markers = lines.getMarker();
 				for (Marker marker : markers) {
-					mapView.getMap().removeMarker(marker); // hide markers
+					MapView.getMap().removeMarker(marker); // hide markers
 				}
 				lines.setVisible(false);
 			}
@@ -115,38 +153,15 @@ public class MainFXMLController
 		for (GMapLine lines : mGMapLineList) {
 			if (lines.getVisible() == false) {
 				DirectionsRenderer render = lines.getRoute();
-				render.setMap(mapView.getMap()); // show lines
+				render.setMap(MapView.getMap()); // show lines
 
 				List<Marker> marker = lines.getMarker();
 				for (Marker markers : marker) {
-					mapView.getMap().addMarker(markers); // show markers
+					MapView.getMap().addMarker(markers); // show markers
 				}
 				lines.setVisible(true);
 			}
 		}
-	}
-
-	@FXML
-	private void testAction(ActionEvent event) {
-	    String inputPath = "config.xml";
-		clearAll();
-		
-		if (!FileHandle.getInstance().isExists(inputPath)) {
-		    File file = FileHandle.getInstance().showXMLChooser(RootPane.getScene().getWindow());
-		    if (file == null) return;
-		    else inputPath = file.getPath();
-		}
-
-		mSolver.reset();
-		mSolver.inputFrom(inputPath);
-		if (mCostRoutes.size() > 0) {
-		    System.out.println("set cost");
-		    mSolver.costFrom(mCostRoutes);
-		}
-		mSaveRoutes = mSolver.solve(20);
-
-		afterSolve(mSolver, mSaveRoutes);
-		updateMenubutton();
 	}
 
 	@Override
@@ -155,8 +170,8 @@ public class MainFXMLController
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		mapView.addMapInializedListener(this);
-		DbManager.getInstance();
+		MapView.addMapInializedListener(this);
+		DbManager.getInstance();		
 	}
 
 	@Override
@@ -166,9 +181,9 @@ public class MainFXMLController
 		options.center(new LatLong(24.997861, 121.486786)).zoomControl(true).mapTypeControl(false).zoom(14)
 				.overviewMapControl(true).streetViewControl(false).doubleClickZoomControl(false)
 				.mapType(MapTypeIdEnum.ROADMAP);
-		mapView.createMap(options);
+		MapView.createMap(options);
 		mDirectionsService = new DirectionsService();
-		mDirectionsPane = mapView.getDirec();
+		mDirectionsPane = MapView.getDirec();
 	}
 
 	private void afterSolve(IVrpSolver solver, List<Route> routes) {
@@ -196,12 +211,13 @@ public class MainFXMLController
 	}
 
     private void clearAll() {
-        mapView.getMap().clearMarkers();
+        MapView.getMap().clearMarkers();
         for (GMapLine lines : mGMapLineList) {
             DirectionsRenderer render = lines.getRoute();
             render.clearDirections();
         }
         mGMapLineList.clear(); // clear any route markers
+        mCurrentRouteGuide.clear();
     }
 	   
 	private void drawDriections(Depot start, Depot end, Route route) {
@@ -221,7 +237,7 @@ public class MainFXMLController
 
                 Marker marker = new Marker(markerOptions);
 
-                mapView.getMap().addMarker(marker);
+                MapView.getMap().addMarker(marker);
                 LineMarkers.saveLineMarkers(marker); // add markers one Line
             }
 
@@ -235,9 +251,9 @@ public class MainFXMLController
         markerOptions.position(new LatLong(start.getLatitude(), start.getLongitude()))
                 .icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
         Marker marker = new Marker(markerOptions);
-        mapView.getMap().addMarker(marker);
+        MapView.getMap().addMarker(marker);
 
-        DirectionsRenderer directionsRenderer = new DirectionsRenderer(false, mapView.getMap(), mDirectionsPane, RouteColor.getInstance().get(route.getId()));
+        DirectionsRenderer directionsRenderer = new DirectionsRenderer(false, MapView.getMap(), mDirectionsPane, RouteColor.getInstance().get(route.getId()));
         mDirectionsService.getRoute(request, this, directionsRenderer);
         LineMarkers.saveRoute(directionsRenderer);
 
@@ -279,11 +295,11 @@ public class MainFXMLController
             if (i == index) {
                 if (mGMapLineList.get(i).getVisible() == false) {
                     DirectionsRenderer render = mGMapLineList.get(i).getRoute();
-                    render.setMap(mapView.getMap()); // show lines
+                    render.setMap(MapView.getMap()); // show lines
 
                     List<Marker> marker = mGMapLineList.get(i).getMarker();
                     for (Marker markers : marker) {
-                        mapView.getMap().addMarker(markers); // show markers
+                        MapView.getMap().addMarker(markers); // show markers
                     }
                     mGMapLineList.get(i).setVisible(true);
                 }
@@ -294,7 +310,7 @@ public class MainFXMLController
 
                     List<Marker> marker = mGMapLineList.get(i).getMarker();
                     for (Marker markers : marker) {
-                        mapView.getMap().removeMarker(markers); // hide markers
+                        MapView.getMap().removeMarker(markers); // hide markers
                     }
                     mGMapLineList.get(i).setVisible(false);
                 }
@@ -335,11 +351,11 @@ public class MainFXMLController
                     for (GMapLine lines : mGMapLineList) { // Show Total Routes
                         if (lines.getVisible() == false) {
                             DirectionsRenderer render = lines.getRoute();
-                            render.setMap(mapView.getMap()); // show lines
+                            render.setMap(MapView.getMap()); // show lines
 
                             List<Marker> marker = lines.getMarker();
                             for (Marker markers : marker) {
-                                mapView.getMap().addMarker(markers); // show markers
+                                MapView.getMap().addMarker(markers); // show markers
                             }
                             lines.setVisible(true);
                         }

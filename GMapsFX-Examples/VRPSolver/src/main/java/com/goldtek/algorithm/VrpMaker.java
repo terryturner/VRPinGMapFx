@@ -65,15 +65,14 @@ public class VrpMaker {
         if (Depots != null) {
             int serviceId = 2;
             for (Depot depot : Depots) {
-                System.out.println(depot.toString());
                 Location.Builder locBuilder = Location.Builder.newInstance();
                 locBuilder.setId(depot.getLocationID());
                 locBuilder.setCoordinate(Coordinate.newInstance(depot.getLongitude(), depot.getLatitude()));
                 if (depot.getDeliverCapacity() > 0) {
-                    vrpBuilder.addJob(Delivery.Builder.newInstance(String.valueOf(serviceId++)).addSizeDimension(0, depot.getDeliverCapacity()).setLocation(locBuilder.build()).build());
+                    vrpBuilder.addJob(Delivery.Builder.newInstance(String.valueOf(serviceId++)).setName(depot.getName()).addSizeDimension(0, depot.getDeliverCapacity()).setLocation(locBuilder.build()).build());
                 }
                 if (depot.getPickupCapacity() > 0) {
-                    vrpBuilder.addJob(Pickup.Builder.newInstance(String.valueOf(serviceId++)).addSizeDimension(0, depot.getPickupCapacity()).setLocation(locBuilder.build()).build());
+                    vrpBuilder.addJob(Pickup.Builder.newInstance(String.valueOf(serviceId++)).setName(depot.getName()).addSizeDimension(0, depot.getPickupCapacity()).setLocation(locBuilder.build()).build());
                 }
             }
         }

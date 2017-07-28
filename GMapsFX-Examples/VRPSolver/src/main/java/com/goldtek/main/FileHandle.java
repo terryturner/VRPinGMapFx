@@ -26,4 +26,11 @@ public class FileHandle {
         dialog.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
         return dialog.showOpenDialog(window);
     }
+    
+    public File showXMLChooser(Window window, String title) {
+        FileChooser dialog = new FileChooser();
+        dialog.setTitle(title);
+        dialog.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
+        return dialog.showOpenDialog(window);
+    }
 }

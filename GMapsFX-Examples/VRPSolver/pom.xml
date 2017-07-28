@@ -10,14 +10,12 @@
 
     <name>VRPSolver</name>
     
-    <description>This project demonstrates how to solve VRP.
-
-
-    </description>
+    <description>This project demonstrates how to solve VRP.</description>
     
      <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>com.goldtek.main.MainApp</mainClass>
+        <skipTests>true</skipTests>
     </properties>
 
     <build>
@@ -91,8 +89,13 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <jvmArgs>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                        <jvmArg>-Xms256m</jvmArg>
+                    </jvmArgs>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 

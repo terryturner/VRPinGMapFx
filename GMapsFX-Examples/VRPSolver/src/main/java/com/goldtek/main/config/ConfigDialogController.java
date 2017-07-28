@@ -79,7 +79,6 @@ public class ConfigDialogController implements Initializable {
         ServiceTab.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
             @Override
             public void changed(ObservableValue<? extends Tab> ob, Tab oldTab, Tab newTab) {
-                System.out.println(newTab.getId());
                 Depots.clear();
                 for (ConfigDepot depot : AllDepots) {
                     if (depot.getAreaNumber().equals(newTab.getId()))

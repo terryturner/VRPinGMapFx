@@ -54,9 +54,10 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
         String inputPath = "input/goldtek_golden_sample.xml";
         if (!mVrpMaker.intialized())
         {
-            File file = FileHandle.getInstance().showXMLChooser(mWindow);
+            File file = FileHandle.getInstance().showXMLChooser(mWindow, "請開啟標準範例");
             if (file == null) return;
-            else inputPath = file.getPath();
+
+            inputPath = file.getPath();
             mVrpMaker.readForGoldenSample(inputPath);
         }
 
@@ -64,7 +65,7 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
     }
     
     public void show() {
-        Dialog.showAndWait();
+        if (mVrpMaker.intialized()) Dialog.showAndWait();
     }
 
     @Override
@@ -73,7 +74,7 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
             mVrpMaker.buildFiniteSize(mController.getAddedVehicles(), mController.getAddedDepots());
             return true;
         } else if (buttonType == mCancelButton) {
-            System.exit(0);
+            //System.exit(0);
             return false;
         }
         return false;
