@@ -1,8 +1,5 @@
 package com.goldtek.main.routeguide;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RouteColor {
     private static RouteColor sInstance = new RouteColor();
     

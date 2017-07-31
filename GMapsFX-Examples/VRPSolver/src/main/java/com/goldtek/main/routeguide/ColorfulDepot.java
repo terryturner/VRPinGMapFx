@@ -1,10 +1,6 @@
 package com.goldtek.main.routeguide;
 
-import java.util.ArrayList;
-
 import com.goldtek.algorithm.Depot;
-
-import javafx.collections.ObservableList;
 
 public class ColorfulDepot {
 	private Depot mDepot;
@@ -21,7 +17,6 @@ public class ColorfulDepot {
 		this.mDepot = depot;
 		this.mColorIndex = colorIndex;
 		this.mListViewID = id;
-
 	}
 
 	public Depot getDepot() {

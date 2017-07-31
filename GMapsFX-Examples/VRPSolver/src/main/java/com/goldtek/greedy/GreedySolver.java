@@ -55,7 +55,7 @@ public class GreedySolver extends JspritSolver {
             boolean isTransportable = true;
             int index = 0;
             while (isTransportable) {
-                Route vehicleRoute = new Route(index++);
+                Route vehicleRoute = new Route(index++, vehicle.getId());
                 int curDeliverAmount = capacity;
                 int curPickupAmount = 0;
                 
@@ -110,7 +110,7 @@ public class GreedySolver extends JspritSolver {
 
         mVrpBuilder.getAddedVehicles().forEach(vehicle -> {
             final int capacity = vehicle.getType().getCapacityDimensions().get(0);
-            Route vehicleRoute = new Route(vehicle.getIndex());
+            Route vehicleRoute = new Route(vehicle.getIndex(), vehicle.getId());
             int curDeliverAmount = capacity;
             int curPickupAmount = 0;
 

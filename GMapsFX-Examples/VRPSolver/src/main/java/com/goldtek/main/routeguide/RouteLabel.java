@@ -13,7 +13,8 @@ public class RouteLabel {
             ascii.add (String.valueOf (c));
     }
     
-    private List <String> ascii = new ArrayList <String> (26);
+    private List<String> ascii = new ArrayList <String> (26);
+    private List<String> drivers = new ArrayList<>();
     
     public String get(int index) {
         if (index < 0) index = 0;
@@ -25,5 +26,19 @@ public class RouteLabel {
         if (index < 0) index = 0;
         else if (index >= ascii.size()) index = index % ascii.size();
         return ascii.get(index) + order;
+    }
+    
+    public void setDriver(int index, String driver) {
+        if (index < 0) index = 0;
+        else if (index >= drivers.size()) {
+            for (int i = drivers.size(); i < index+1 ; i++) drivers.add("");
+        }
+        drivers.add(index, driver);
+    }
+    
+    public String getDriver(int index) {
+        if (index < 0) index = 0;
+        else if (index >= drivers.size()) index = drivers.size() - 1;
+        return drivers.get(index);
     }
 }

@@ -3,8 +3,10 @@
  <?import javafx.scene.control.Label?>
   <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:id="vBox">	
+<VBox xmlns:fx="http://javafx.com/fxml" fx:id="Pane" id="vbox-custom">	
 <children>
-    <Label  fx:id="label1"/>
+    <Label  fx:id="Line1"/>
+    <Label  fx:id="Line2"/>
+    <Label  fx:id="Line3"/>
 </children>
 </VBox>

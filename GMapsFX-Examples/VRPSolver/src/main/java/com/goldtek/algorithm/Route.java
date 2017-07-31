@@ -5,11 +5,17 @@ import java.util.List;
 
 public class Route {
     private final int ID;
+    private final String Driver;
 	private List<Depot> depots = new ArrayList<>();
 	
-	public Route(int id) { ID = id; }
+	public Route(int id, String driver) {
+	    ID = id;
+	    Driver = driver;
+	}
 	
 	public int getId() { return ID; }
+	
+	public String getDriver() { return Driver; }
 	
 	public void addDepot(Depot depot) {
 		depots.add(depot);

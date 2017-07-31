@@ -20,6 +20,11 @@ public class ConfigDepot extends Depot {
         mName.set(depot.getName());
     }
     
+    public ConfigDepot(String id, String county, String area, String name, double lng, double lat) {
+        super(id, county, area, name, lng, lat);
+        mName.set(name);
+    }
+    
     public final StringProperty nameProperty() {
         return this.mName;
     }

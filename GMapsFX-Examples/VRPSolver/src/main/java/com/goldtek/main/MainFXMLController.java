@@ -71,7 +71,7 @@ public class MainFXMLController
 			dialog.show();
 			break;
 	     case "MenuStart":
-	         String inputPath = "config.xml";
+	         String inputPath = VrpMaker.OUTPUT;
 	         clearAll();
 	         
 	         if (!FileHandle.getInstance().isExists(inputPath)) {
@@ -86,7 +86,6 @@ public class MainFXMLController
 	         mProgress = new WorkIndicatorDialog<>(RootPane.getScene().getWindow(), "Processing VRP");
 	         mProgress.exec(Boolean.FALSE, inputParam -> {
 	             if (mCostRoutes.size() > 0 && MenuCostAssist.isSelected()) {
-	                 System.out.println("set cost");
 	                 mSolver.costFrom(mCostRoutes);
 	             }
 	             mSaveRoutes = mSolver.solve(2000);
@@ -191,12 +190,13 @@ public class MainFXMLController
 			for (Route route : routes) {
 			    int index = routes.indexOf(route);
 				drawDriections(solver.getCenter(index), solver.getCenter(index), route);
-				mMenuButtonText.add("Route" + RouteLabel.getInstance().get(index));
+				RouteLabel.getInstance().setDriver(index, route.getDriver());
+				mMenuButtonText.add(String.format("%s - %s", RouteLabel.getInstance().get(index), RouteLabel.getInstance().getDriver(index)));
 			}
 
             mCurrentRouteGuide.clear();
             for (Route route : routes) {
-                MenuButton_Showitem(mSaveRoutes.indexOf(route), false);
+                MenuButton_Showitem(routes.indexOf(route), false);
 
                 RouteGuide.setItems(mCurrentRouteGuide);
                 RouteGuide.setCellFactory(

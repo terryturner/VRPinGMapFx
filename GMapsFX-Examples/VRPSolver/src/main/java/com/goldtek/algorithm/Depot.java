@@ -1,10 +1,11 @@
 package com.goldtek.algorithm;
 
+import com.graphhopper.jsprit.core.util.Coordinate;
+
 public class Depot {
 	private final String mLocationID; 
 	private final String mName;
-	private final double mLongitude;
-	private final double mLatitude;
+	private final Coordinate mCoordinate;
 	private final boolean mBelongCenter;
 	private String mCounty = null;
 	private String mArea = null;
@@ -40,8 +41,7 @@ public class Depot {
 		mBelongCenter = isCenter;
 		mLocationID = id;
 		mName = name;
-		mLongitude = lng;
-		mLatitude = lat;
+		mCoordinate = new Coordinate(lng, lat);
 		mPickupCapacity = pickupNo;
 		mDeliverCapacity = deliverNo;
 	}
@@ -50,16 +50,16 @@ public class Depot {
 	
 	public String getName() { return (mNick == null) ? mName : mNick; }
 	
-	public double getLongitude() { return mLongitude; }
+	public double getLongitude() { return mCoordinate.getX(); }
 	
-	public double getLatitude() { return mLatitude; }
+	public double getLatitude() { return mCoordinate.getY(); }
 	
 	public boolean isCenter() { return mBelongCenter; }
 	
 	public int getPickupCapacity() { return mPickupCapacity; }
 	
 	public int getDeliverCapacity() { return mDeliverCapacity; }
-	
+		
 	public String getCounty() { return mCounty; }
 	
 	public String getArea() { return mArea; }
@@ -85,6 +85,6 @@ public class Depot {
 	}
 	
 	public String toString() {
-		return String.format("[%s] [%f, %f] %s - Pickup: %d, Deliver: %d", mLocationID, mLongitude, mLatitude, mName, mPickupCapacity, mDeliverCapacity);
+		return String.format("[%s] [%f, %f] %s - Pickup: %d, Deliver: %d", getLocationID(), getLongitude(), getLatitude(), getName(), getPickupCapacity(), getDeliverCapacity());
 	}
 }

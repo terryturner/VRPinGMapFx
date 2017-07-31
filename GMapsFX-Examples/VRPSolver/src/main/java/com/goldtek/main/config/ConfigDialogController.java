@@ -116,8 +116,8 @@ public class ConfigDialogController implements Initializable {
         initVehicleTypeBox();
         initVehicleList();
         
-        for(Depot depot : VrpMaker.getInstance().getGoldenSampleDepot()) {
-            AllDepots.add(new ConfigDepot(depot));
+        for(ConfigDepot depot : VrpMaker.getInstance().getConfigDepot()) {
+            AllDepots.add(depot);
         }
         
         Depots.clear();

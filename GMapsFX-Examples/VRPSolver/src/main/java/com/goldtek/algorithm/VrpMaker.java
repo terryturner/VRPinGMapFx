@@ -1,8 +1,11 @@
 package com.goldtek.algorithm;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.goldtek.main.FileHandle;
+import com.goldtek.main.config.ConfigDepot;
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem.FleetSize;
@@ -20,6 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class VrpMaker {
+    public final static String OUTPUT = "config.xml";
     private static VrpMaker sInatance = null;
     
     public static VrpMaker getInstance() { 
@@ -37,6 +41,7 @@ public class VrpMaker {
     }
     
     private final VehicleRoutingProblem.Builder mGoldenSampleBuilder = VehicleRoutingProblem.Builder.newInstance();
+    private VehicleRoutingProblem.Builder mOutputBuilder = null;
     private boolean mInitialized = false;
     
     public boolean intialized() { return mInitialized; }
@@ -45,6 +50,14 @@ public class VrpMaker {
         if (!intialized()) {
             new VrpXMLReader(mGoldenSampleBuilder).read(path);
             mInitialized = true;
+        }
+        readFromOutput();
+    }
+    
+    public void readFromOutput() {
+        if (FileHandle.getInstance().isExists(OUTPUT)) {
+            mOutputBuilder = VehicleRoutingProblem.Builder.newInstance();
+            new VrpXMLReader(mOutputBuilder).read(OUTPUT);
         }
     }
     
@@ -77,7 +90,9 @@ public class VrpMaker {
             }
         }
         
-        new VrpXMLWriter(vrpBuilder.build()).write("config.xml");
+        new VrpXMLWriter(vrpBuilder.build()).write(OUTPUT);
+        
+        readFromOutput();
     }
     
     public ObservableList<CarModel> getGoldenSampleCarModel() {
@@ -90,8 +105,15 @@ public class VrpMaker {
     
     public ObservableList<Car> getGoldenSampleCar() {
         ObservableList<Car> Cars = FXCollections.observableArrayList();
-        for (Vehicle vehicle : mGoldenSampleBuilder.getAddedVehicles()) {
-            Cars.add(new Car(vehicle));
+        Collection<Vehicle> addedVehicles = null;
+        
+        if (mOutputBuilder != null && mOutputBuilder.getAddedVehicles().size() > 0) addedVehicles = mOutputBuilder.getAddedVehicles();
+        else addedVehicles = mGoldenSampleBuilder.getAddedVehicles();
+        
+        if (addedVehicles != null) {
+            for (Vehicle vehicle : addedVehicles) {
+                Cars.add(new Car(vehicle));
+            }
         }
         return Cars;
     }
@@ -104,6 +126,41 @@ public class VrpMaker {
                 Depots.add(new Depot(serv.getLocation().getId(), serv.getName(), serv.getLocation().getCoordinate().getX(), serv.getLocation().getCoordinate().getY()));
             }
         }
+        return Depots;
+    }
+    
+    public ObservableList<ConfigDepot> getConfigDepot() {
+        ObservableList<ConfigDepot> Depots = FXCollections.observableArrayList();
+        HashMap<Coordinate, ConfigDepot> temp = new HashMap<>();
+        
+        for (Job job : mGoldenSampleBuilder.getAddedJobs()) {
+            if (job instanceof Service) {
+                Service serv = (Service) job;
+                ConfigDepot depot = new ConfigDepot(serv.getLocation().getId(), null, null, serv.getName(), serv.getLocation().getCoordinate().getX(), serv.getLocation().getCoordinate().getY());
+                temp.put(serv.getLocation().getCoordinate(), depot);
+            }
+        }
+        
+        if (mOutputBuilder != null) {
+            for (Job job : mOutputBuilder.getAddedJobs()) {
+                if (job instanceof Service) {
+                    Service serv = (Service) job;
+                    if (serv instanceof Pickup) {
+                        temp.get(serv.getLocation().getCoordinate()).setOn(true);
+                        temp.get(serv.getLocation().getCoordinate()).setPickup(serv.getSize().get(0));
+                    }
+                    if (serv instanceof Delivery) {
+                        temp.get(serv.getLocation().getCoordinate()).setOn(true);
+                        temp.get(serv.getLocation().getCoordinate()).setDeliver(serv.getSize().get(0));
+                    }
+                }
+            }
+        }
+        
+        for (Map.Entry<Coordinate, ConfigDepot> entry : temp.entrySet()) {
+            Depots.add(entry.getValue());
+        }
+        
         return Depots;
     }
     
