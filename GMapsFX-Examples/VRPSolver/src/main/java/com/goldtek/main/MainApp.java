@@ -29,7 +29,7 @@ public class MainApp extends Application {
         Scene scene = new Scene(root);
         stage.setFullScreen(false);
         stage.setMaximized(false);  //set default is max windows.
-        stage.setResizable(false); //disable resize windows.
+        stage.setResizable(true); //disable resize windows.
 //        stage.initStyle(StageStyle.DECORATED);//default
 //        stage.initStyle(StageStyle.UTILITY); //set windows style
 

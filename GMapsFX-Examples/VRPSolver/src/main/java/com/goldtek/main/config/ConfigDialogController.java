@@ -17,6 +17,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
@@ -91,14 +93,29 @@ public class ConfigDialogController implements Initializable {
     private EventHandler<ActionEvent> ActionEventHandler = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
+        	if(VehicleDriverInput.getText().isEmpty()){
+        		Alert alert = new Alert(AlertType.WARNING);
+        		alert.setTitle("Information Dialog");
+        		alert.setHeaderText(null);
+        		alert.setContentText("Please insert Name!!!");
+        		alert.showAndWait();
+        	}else{
+            VehicleDriverInput.getText();
+        	
             for (Car car : Cars) {
                 if (car.getName().equalsIgnoreCase(VehicleDriverInput.getText())) {
+            		Alert alert = new Alert(AlertType.WARNING);
+            		alert.setTitle("Information Dialog");
+            		alert.setHeaderText(null);
+            		alert.setContentText("The Name is Exiseted!!!");
+            		alert.showAndWait();
                     return;
                 }
             }
             CarModel model = VehicleTypeBox.getSelectionModel().getSelectedItem();
             Car car = new Car(VehicleDriverInput.getText(), model.getModel(), model.getCapacity()); 
             Cars.add(car);
+        	}
         }
     };
 
