@@ -41,9 +41,12 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -138,9 +141,10 @@ public class VrpXMLWriter {
         } catch (ConfigurationException e) {
             throw new RuntimeException(e);
         }
-
+            
         try {
-            Writer out = new FileWriter(filename);
+            //Writer out = new FileWriter(filename);
+            OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8);
             XMLSerializer serializer = new XMLSerializer(out, format);
             serializer.serialize(xmlConfig.getDocument());
             out.close();

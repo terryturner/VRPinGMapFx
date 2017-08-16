@@ -132,11 +132,13 @@
             <groupId>com.graphhopper</groupId>
             <artifactId>jsprit-core</artifactId>
             <version>1.7.2-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 		<dependency>
     		<groupId>com.graphhopper</groupId>
     		<artifactId>jsprit-io</artifactId>
     		<version>1.7.2-SNAPSHOT</version>
+            <scope>compile</scope>
 		</dependency>
     </dependencies>
 

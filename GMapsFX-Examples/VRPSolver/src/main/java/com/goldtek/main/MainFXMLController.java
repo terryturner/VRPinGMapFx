@@ -7,8 +7,6 @@ import com.lynden.gmapsfx.MapComponentInitializedListener;
 import com.lynden.gmapsfx.javascript.object.*;
 import com.lynden.gmapsfx.service.directions.*;
 
-import ch.qos.logback.core.joran.action.Action;
-
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
