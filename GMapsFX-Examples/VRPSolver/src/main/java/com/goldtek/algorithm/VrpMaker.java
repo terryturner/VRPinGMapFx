@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.goldtek.main.FileHandle;
 import com.goldtek.main.config.ConfigDepot;
+import com.goldtek.main.config.ConfigShipment;
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem.FleetSize;
@@ -13,6 +14,7 @@ import com.graphhopper.jsprit.core.problem.job.Delivery;
 import com.graphhopper.jsprit.core.problem.job.Job;
 import com.graphhopper.jsprit.core.problem.job.Pickup;
 import com.graphhopper.jsprit.core.problem.job.Service;
+import com.graphhopper.jsprit.core.problem.job.Shipment;
 import com.graphhopper.jsprit.core.problem.vehicle.Vehicle;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
 import com.graphhopper.jsprit.core.util.Coordinate;
@@ -61,7 +63,7 @@ public class VrpMaker {
         }
     }
     
-    public void buildFiniteSize(Collection<Car> Cars, Collection<Depot> Depots) {
+    public void buildFiniteSize(Collection<Car> Cars, Collection<Depot> Depots, Collection<ConfigShipment> Ships) {
         VehicleRoutingProblem.Builder vrpBuilder = VehicleRoutingProblem.Builder.newInstance();
         vrpBuilder.setFleetSize(FleetSize.FINITE);
         
@@ -75,8 +77,8 @@ public class VrpMaker {
             }
         }
         
+        int serviceId = 2;
         if (Depots != null) {
-            int serviceId = 2;
             for (Depot depot : Depots) {
                 Location.Builder locBuilder = Location.Builder.newInstance();
                 locBuilder.setId(depot.getLocationID());
@@ -87,6 +89,20 @@ public class VrpMaker {
                 if (depot.getPickupCapacity() > 0) {
                     vrpBuilder.addJob(Pickup.Builder.newInstance(String.valueOf(serviceId++)).setName(depot.getName()).addSizeDimension(0, depot.getPickupCapacity()).setLocation(locBuilder.build()).build());
                 }
+            }
+        }
+        
+        if (Ships != null) {
+            for (ConfigShipment ship : Ships) {
+                int id = serviceId++;
+                Location.Builder pickBuilder = Location.Builder.newInstance();
+                pickBuilder.setId(ship.getPickup().getLocationID());
+                pickBuilder.setCoordinate(Coordinate.newInstance(ship.getPickup().getLongitude(), ship.getPickup().getLatitude()));
+                Location.Builder dropBuilder = Location.Builder.newInstance();
+                dropBuilder.setId(ship.getDropoff().getLocationID());
+                dropBuilder.setCoordinate(Coordinate.newInstance(ship.getDropoff().getLongitude(), ship.getDropoff().getLatitude()));
+                String name = String.format("%s-%s", ship.getPickup().getName(), ship.getDropoff().getName());
+                vrpBuilder.addJob(Shipment.Builder.newInstance(String.valueOf(id)).setName(name).addSizeDimension(0, ship.getAmount()).setPickupLocation(pickBuilder.build()).setDeliveryLocation(dropBuilder.build()).build());
             }
         }
         
@@ -164,4 +180,21 @@ public class VrpMaker {
         return Depots;
     }
     
+    public ObservableList<ConfigShipment> getConfigShipment() {
+        ObservableList<ConfigShipment> Ships = FXCollections.observableArrayList();
+        
+        if (mOutputBuilder != null) {
+            for (Job job : mOutputBuilder.getAddedJobs()) {
+                if (job instanceof Shipment) {
+                    Shipment ship = (Shipment) job;
+                    String[] names = ship.getName().split("-", 2);
+
+                    Depot from = new Depot(ship.getPickupLocation().getId(), names[0], ship.getPickupLocation().getCoordinate().getX(), ship.getPickupLocation().getCoordinate().getY());
+                    Depot to = new Depot(ship.getDeliveryLocation().getId(), names[1], ship.getDeliveryLocation().getCoordinate().getX(), ship.getDeliveryLocation().getCoordinate().getY());
+                    Ships.add(new ConfigShipment(from, to, ship.getSize().get(0)));
+                }
+            }
+        }
+        return Ships;
+    }
 }

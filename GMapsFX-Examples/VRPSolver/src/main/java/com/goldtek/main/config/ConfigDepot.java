@@ -78,6 +78,10 @@ public class ConfigDepot extends Depot {
     }
     
     public String toString() {
+        return getName();
+    }
+    
+    public String debug() {
         return String.format("ConfigDepot: [%s] [%f, %f] %s - Pickup: %d, Deliver: %d", getLocationID(), getLongitude(), getLatitude(), getName(), getPickupCapacity(), getDeliverCapacity());
     }
 }

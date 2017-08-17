@@ -71,7 +71,7 @@ public class ConfigDialog implements Callback<ButtonType, Boolean>{
     @Override
     public Boolean call(ButtonType buttonType) {
         if (buttonType == mConfirmButton) {
-            mVrpMaker.buildFiniteSize(mController.getAddedVehicles(), mController.getAddedDepots());
+            mVrpMaker.buildFiniteSize(mController.getAddedVehicles(), mController.getAddedDepots(), mController.getAddedShipments());
             return true;
         } else if (buttonType == mCancelButton) {
             //System.exit(0);

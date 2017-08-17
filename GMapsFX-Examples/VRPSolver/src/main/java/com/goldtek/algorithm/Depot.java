@@ -11,6 +11,8 @@ public class Depot {
 	private String mArea = null;
 	private int mPickupCapacity = 0;
 	private int mDeliverCapacity = 0;
+	private int mPickupShipment = 0;
+	private int mDropoffShipment = 0;
 	private String mNick = null;
 	
 	public Depot(Depot depot) {
@@ -59,7 +61,11 @@ public class Depot {
 	public int getPickupCapacity() { return mPickupCapacity; }
 	
 	public int getDeliverCapacity() { return mDeliverCapacity; }
-		
+	
+	public int getPickupShipment() { return mPickupShipment; }
+	
+	public int getDropoffShipment() { return mDropoffShipment; }
+
 	public String getCounty() { return mCounty; }
 	
 	public String getArea() { return mArea; }
@@ -76,8 +82,21 @@ public class Depot {
 		mDeliverCapacity = capacity;
 	}
 	
+	public void setPickupShipment(int amount) { mPickupShipment = amount; }
+	
+	public void setDropoffShipment(int amount) { mDropoffShipment = amount; }
+	
 	public String getAreaNumber() {
 	    return mLocationID.substring(0, 3);
+	}
+	
+	public boolean isSameLocation(Depot depot) {
+	    if (depot == null) return false;
+	    if (depot.getLatitude() != getLatitude()) return false;
+	    if (depot.getLongitude() != getLongitude()) return false;
+	    if (depot.getLocationID() != getLocationID()) return false;
+	    if (depot.getName() != getName()) return false;
+	    return true;
 	}
 	
 	public String toLatLongString() {

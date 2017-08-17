@@ -24,14 +24,14 @@
 	       <menus>
 	           <Menu text="File">
 	               <items>
-	                   <MenuItem fx:id="MenuConfig" text="Config" onAction="#handleMenu" />
+	                   <MenuItem id="MenuConfig" text="Config" onAction="#handleMenu" />
 	                   <CheckMenuItem fx:id="MenuCostAssist" text="Cost Assist" onAction="#handleMenu" />
-	                   <MenuItem fx:id="MenuExit" text="Exit" onAction="#handleMenu" />
+	                   <MenuItem id="MenuExit" text="Exit" onAction="#handleMenu" />
 	               </items>
 	           </Menu>
 	           <Menu text="Action">
 	               <items>
-                    <MenuItem fx:id="MenuStart" text="Start" onAction="#handleMenu" />
+                    <MenuItem id="MenuStart" text="Start" onAction="#handleMenu" />
                    </items>
                </Menu>
 	       </menus>
@@ -46,21 +46,8 @@
 	   </AnchorPane>
 	</center>
 	
-	<left>
-    <!-- 
-		<VBox prefWidth="180.0">
-			<Button fx:id="testButton" onAction="#testAction" text="test" />
-      		<Separator orientation="HORIZONTAL"/>
-			<Button fx:id="clearButton" onAction="#HideTotal" text="HideTotal" />
-			<Separator orientation="HORIZONTAL"/>
-      		<Button onAction="#ShowTotal" text="ShowTotal" />
-      		<Separator orientation="HORIZONTAL"/>
-		</VBox>
-    -->
-	</left>
-	
 	<right>
-		<ListView fx:id="RouteGuide"/>
+		<ListView fx:id="RouteGuide" prefWidth="400.0"/>
 	</right>
 	
 </BorderPane>

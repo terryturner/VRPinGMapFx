@@ -21,8 +21,11 @@ import com.graphhopper.jsprit.core.problem.job.Delivery;
 import com.graphhopper.jsprit.core.problem.job.Job;
 import com.graphhopper.jsprit.core.problem.job.Pickup;
 import com.graphhopper.jsprit.core.problem.job.Service;
+import com.graphhopper.jsprit.core.problem.job.Shipment;
 import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
 import com.graphhopper.jsprit.core.problem.solution.route.VehicleRoute;
+import com.graphhopper.jsprit.core.problem.solution.route.activity.DeliverShipment;
+import com.graphhopper.jsprit.core.problem.solution.route.activity.PickupShipment;
 import com.graphhopper.jsprit.core.problem.solution.route.activity.TourActivity;
 import com.graphhopper.jsprit.core.problem.vehicle.Vehicle;
 import com.graphhopper.jsprit.core.util.Solutions;
@@ -164,10 +167,22 @@ public class JspritSolver implements IVrpSolver {
     			if (showRoute.getLastDepot() != null && showRoute.getLastDepot().getLocationID().equals(act.getLocation().getId())) {
     				depot = showRoute.getLastDepot();
     			} else {
-    				if (act instanceof TourActivity.JobActivity) {                	
+    				if (act instanceof TourActivity.JobActivity) {
                     	Job job = ((TourActivity.JobActivity) act).getJob();
-    					depot = new Depot(act.getLocation().getId(), job.getName(),
-    							act.getLocation().getCoordinate().getX(), act.getLocation().getCoordinate().getY());
+                    	String name = "-";
+
+                    	if (job instanceof Pickup || job instanceof Delivery)
+                    	    name = job.getName();
+                    	else if (job instanceof Shipment) {
+                    	    if (act instanceof PickupShipment)
+                    	        name = job.getName().substring(0, job.getName().indexOf("-"));
+                    	    else if (act instanceof DeliverShipment)
+                    	        name = job.getName().substring(job.getName().indexOf("-")+1);
+                    	}
+                    	    
+                        depot = new Depot(act.getLocation().getId(), name,
+                                act.getLocation().getCoordinate().getX(), act.getLocation().getCoordinate().getY());
+
                     } else {
     					depot = new Depot(act.getLocation().getId(), "-", act.getLocation().getCoordinate().getX(),
     							act.getLocation().getCoordinate().getY());
@@ -179,10 +194,52 @@ public class JspritSolver implements IVrpSolver {
     				Job job = ((TourActivity.JobActivity) act).getJob();
     				if (job instanceof Pickup) depot.setPickupCapacity(job.getSize().get(0));
 					else if (job instanceof Delivery) depot.setDeliverCapacity(job.getSize().get(0));
+					else if (job instanceof Shipment) {
+					    Shipment ship = (Shipment) job;
+					    if (act.getLocation().getId().equals(ship.getPickupLocation().getId()))
+					        depot.setPickupShipment(depot.getPickupShipment() + job.getSize().get(0));
+					    else if (act.getLocation().getId().equals(ship.getDeliveryLocation().getId()))
+					        depot.setDropoffShipment(depot.getDropoffShipment() + job.getSize().get(0));
+					}
+    				
+                    if (job instanceof Shipment && !depot.getName().contains("Shipment")) {
+                        depot.setNickName(String.format("%s (with Shipment)", depot.getName()));
+                    }
     			}
     		}
+    		System.out.println("route size: " + showRoute.getDepots().size());
     		mShowRoutes.add(showRoute);
     	}
+    	
+    	boolean debug = false;
+        if (debug) {
+            for (VehicleRoute route : bestSolution.getRoutes()) {
+                System.out.println("=== route ===");
+
+                System.out.print(route.getVehicle().getId() + ": [ ");
+                for (TourActivity act : route.getActivities()) {
+                    String jobId;
+                    if (act instanceof TourActivity.JobActivity) {
+                        jobId = ((TourActivity.JobActivity) act).getJob().getId();
+                    } else {
+                        jobId = "-";
+                    }
+                    System.out.print(jobId + " ");
+                }
+                System.out.println("]");
+            }
+
+            if (bestSolution.getUnassignedJobs().size() > 0) {
+                System.out.println("=== Unassigned Service ===");
+                System.out.print("[ ");
+                for (Job job : bestSolution.getUnassignedJobs()) {
+                    if (job instanceof Service) {
+                        System.out.print(job.getId() + " ");
+                    }
+                }
+                System.out.println("]");
+            }
+        }
     	
     	updateCenter();
     	return mShowRoutes;
@@ -194,8 +251,10 @@ public class JspritSolver implements IVrpSolver {
 	        int pickupAmount = 0;
 	        int deliverAmount = 0;
 	        for (Depot depot : route.getDepots()) {
-	            pickupAmount += depot.getDeliverCapacity();
-	            deliverAmount += depot.getPickupCapacity();
+	            if (!depot.getName().contains("-")) {
+	                pickupAmount += depot.getDeliverCapacity();
+	                deliverAmount += depot.getPickupCapacity();
+	            }
 	        }
 	        
 	        Depot center = null;

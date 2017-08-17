@@ -37,7 +37,7 @@ public class ConfigCellCar extends ListCell<Car> {
         super.updateItem(item, empty);
         if (item != null) {
             controller.Cancel.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseHandler);
-            controller.Cancel.setId("Cancel");
+            controller.Cancel.setId("DeleteCar");
             controller.Driver.setText(item.getName());
             controller.VehicleType.setText(item.getModel());
             controller.Capacity.setText("Load: " + item.getCapacity());

@@ -54,13 +54,13 @@
          </content>
       </TitledPane>
       <Separator />
-      <TitledPane fx:id="ServicePane" animated="false" text="Service List">
+      <TitledPane fx:id="ServicePane" animated="false" expanded="false" text="Service List">
         <content>
-          <AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0">
                <children>
                   <TabPane fx:id="ServiceTab" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                      <Tab text="板橋區" id="220">
+                      <Tab id="220" text="板橋區">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
@@ -69,7 +69,7 @@
                               </AnchorPane>
                         </content>
                       </Tab>
-                      <Tab text="永和區" id="234">
+                      <Tab id="234" text="永和區">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
@@ -78,7 +78,7 @@
                               </AnchorPane>
                         </content>
                       </Tab>
-                      <Tab text="中和區" id="235">
+                      <Tab id="235" text="中和區">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
@@ -87,7 +87,7 @@
                               </AnchorPane>
                         </content>
                       </Tab>
-                      <Tab text="土城區" id="236">
+                      <Tab id="236" text="土城區">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
@@ -101,6 +101,48 @@
                </children>
             </AnchorPane>
         </content>
+      </TitledPane>
+      <Separator />
+      <TitledPane fx:id="ShipmentPane" animated="false" expanded="true" text="Shipment List">
+         <content>
+            <VBox minHeight="0.0" minWidth="0.0">
+               <children>
+	              <StackPane prefWidth="200.0">
+                     <children>
+                        <HBox prefWidth="200.0" StackPane.alignment="BOTTOM_LEFT">
+                           <children>
+                              <ComboBox fx:id="PickAShipMenu" prefWidth="200.0" promptText="From">
+                                 <HBox.margin>
+                                    <Insets right="10.0" />
+                                 </HBox.margin>
+                              </ComboBox >
+                              <ComboBox fx:id="SendAShipMenu" prefWidth="200.0" promptText="To">
+                                 <HBox.margin>
+                                    <Insets right="10.0" />
+                                 </HBox.margin>
+                              </ComboBox >
+                              <TextField fx:id="ShipAmount" prefWidth="50.0">
+                                 <HBox.margin>
+                                    <Insets right="10.0" top="10.0"/>
+                                 </HBox.margin>
+                              </TextField>
+                           </children>
+                           <StackPane.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </StackPane.margin>
+                        </HBox>
+                        <Button fx:id="AddShipment" mnemonicParsing="false" text="Add" StackPane.alignment="CENTER_RIGHT">
+                           <StackPane.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </StackPane.margin>
+                        </Button>
+                     </children>
+                  </StackPane>
+                  <Separator prefWidth="200.0" />
+                  <ListView fx:id="ShipmentList" prefHeight="260.0" prefWidth="570.0" />
+               </children>
+            </VBox>
+         </content>
       </TitledPane>
    </children>
 </VBox>
