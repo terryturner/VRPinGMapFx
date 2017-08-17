@@ -1,5 +1,7 @@
 package com.goldtek.algorithm;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +37,12 @@ public class VrpMaker {
     }
     
     private VrpMaker() {
-        String inputPath = "input/goldtek_golden_sample.xml";
-        if (FileHandle.getInstance().isExists(inputPath))
+        String inputPath = getClass().getResource("/input/goldtek_golden_sample.xml").getPath().toString();
+        System.out.println("url " + inputPath);
+        InputStream inputStream = getClass().getResourceAsStream("/input/goldtek_golden_sample.xml");
+        if (inputStream != null)
         {
-            readForGoldenSample(inputPath);
+            readForGoldenSample(inputStream);
         }
     }
     
@@ -50,7 +54,17 @@ public class VrpMaker {
     
     public void readForGoldenSample(String path) {
         if (!intialized()) {
+
             new VrpXMLReader(mGoldenSampleBuilder).read(path);
+            mInitialized = true;
+        }
+        readFromOutput();
+    }
+    
+    public void readForGoldenSample(InputStream stream) {
+        if (!intialized()) {
+
+            new VrpXMLReader(mGoldenSampleBuilder).read(stream);
             mInitialized = true;
         }
         readFromOutput();

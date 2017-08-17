@@ -54,7 +54,7 @@
          </content>
       </TitledPane>
       <Separator />
-      <TitledPane fx:id="ServicePane" animated="false" expanded="false" text="Service List">
+      <TitledPane fx:id="ServicePane" animated="false" expanded="true" text="Service List">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0">
                <children>
@@ -103,7 +103,7 @@
         </content>
       </TitledPane>
       <Separator />
-      <TitledPane fx:id="ShipmentPane" animated="false" expanded="true" text="Shipment List">
+      <TitledPane fx:id="ShipmentPane" animated="false" expanded="false" text="Shipment List">
          <content>
             <VBox minHeight="0.0" minWidth="0.0">
                <children>
