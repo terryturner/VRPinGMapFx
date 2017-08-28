@@ -247,7 +247,7 @@ public class MainFXMLController
         }
         // Add are Start & End markers on the map+++
         markerOptions.position(new LatLong(start.getLatitude(), start.getLongitude()))
-                .icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
+                .icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png").label("");
         Marker marker = new Marker(markerOptions);
         MapView.getMap().addMarker(marker);
 

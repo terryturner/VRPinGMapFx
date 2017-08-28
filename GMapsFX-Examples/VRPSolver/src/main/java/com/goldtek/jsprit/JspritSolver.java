@@ -33,6 +33,7 @@ import com.graphhopper.jsprit.core.util.VehicleRoutingTransportCostsMatrix;
 import com.graphhopper.jsprit.io.problem.VrpXMLReader;
 
 public class JspritSolver implements IVrpSolver {
+    protected final static String SHIPMENT_HINT = "包含快遞";
 	protected static IVrpSolver sInstance = null;
 	protected VehicleRoutingProblem.Builder mVrpBuilder = VehicleRoutingProblem.Builder.newInstance();
 	protected VehicleRoutingTransportCostsMatrix mCostMatrix = null;
@@ -202,12 +203,12 @@ public class JspritSolver implements IVrpSolver {
 					        depot.setDropoffShipment(depot.getDropoffShipment() + job.getSize().get(0));
 					}
     				
-                    if (job instanceof Shipment && !depot.getName().contains("Shipment")) {
-                        depot.setNickName(String.format("%s (with Shipment)", depot.getName()));
+                    if (job instanceof Shipment && !depot.getName().contains(SHIPMENT_HINT)) {
+                        depot.setNickName(String.format("%s (%s)", depot.getName(), SHIPMENT_HINT));
                     }
     			}
     		}
-    		System.out.println("route size: " + showRoute.getDepots().size());
+
     		mShowRoutes.add(showRoute);
     	}
     	
