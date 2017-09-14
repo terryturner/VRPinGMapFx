@@ -208,10 +208,6 @@ public class JspritSolver implements IVrpSolver {
                     }
     			}
     		}
-//<<<<<<< HEAD
-//=======
-//
-//>>>>>>> 60fde4477c4cbb2187e01a12ec8bf68981d564f1
     		mShowRoutes.add(showRoute);
     	}
     	

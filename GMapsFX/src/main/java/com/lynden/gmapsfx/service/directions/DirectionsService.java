@@ -61,12 +61,6 @@ public class DirectionsService extends JavascriptObject{
                 .append(getVariableName())
                 .append(".processResponse(results, status);\n}")
                 .append("});");
-//        System.out.println("direct call: " + r.toString());
-//        Alert alert = new Alert(AlertType.INFORMATION);
-//        alert.setContentText(r.toString());
-//        alert.show();
-//
-//        alert.showAndWait();
         
         LOG.trace("Directions direct call: " + r.toString());
         try{
@@ -75,9 +69,7 @@ public class DirectionsService extends JavascriptObject{
             LOG.error(t.getMessage());
         }
     }
-//    int cont=0;
      public void processResponse(Object results, Object status) {
-//    	 cont++;
         LOG.trace("STATUS: {}",status);
         DirectionStatus pStatus = DirectionStatus.UNKNOWN_ERROR;
         if (status instanceof String && results instanceof JSObject) {

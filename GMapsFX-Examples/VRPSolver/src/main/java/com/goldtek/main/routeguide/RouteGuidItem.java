@@ -45,11 +45,7 @@ public class RouteGuidItem extends ListCell<ColorfulDepot> {
 				Line1.setText(label + colorDepot.getDepotPoint() + " " + colorDepot.getDepot().getName());
 				
 				String deliverMsg = "送貨 " + colorDepot.getDepot().getDeliverCapacity() + "件";
-//<<<<<<< HEAD
 				if (colorDepot.getDepot().getDropoffShipment() > 0) deliverMsg += ", 直送放貨 " + colorDepot.getDepot().getDropoffShipment() + "件";
-//=======
-//				if (colorDepot.getDepot().getDropoffShipment() > 0) deliverMsg += ", 快遞 " + colorDepot.getDepot().getDropoffShipment() + "件";
-//>>>>>>> 60fde4477c4cbb2187e01a12ec8bf68981d564f1
 				String pickupMsg = "取貨 " + colorDepot.getDepot().getPickupCapacity() + "件";
 				if (colorDepot.getDepot().getPickupShipment() > 0) pickupMsg += ", 快遞 " + colorDepot.getDepot().getPickupShipment() + "件";
 				
