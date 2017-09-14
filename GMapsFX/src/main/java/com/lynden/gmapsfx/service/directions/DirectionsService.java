@@ -17,6 +17,9 @@ package com.lynden.gmapsfx.service.directions;
 
 import com.lynden.gmapsfx.javascript.JavascriptObject;
 import com.lynden.gmapsfx.javascript.object.GMapObjectType;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import netscape.javascript.JSObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +54,20 @@ public class DirectionsService extends JavascriptObject{
                 .append(renderer.getVariableName())
                 .append(".setDirections(results);\ndocument.")
                 .append(getVariableName())
+                .append(".processResponse(results, status);\n")
+                .append("}else if (status === 'OVER_QUERY_LIMIT'){\n")
+                .append(renderer.getVariableName())
+                .append(".setDirections(results);\ndocument.")
+                .append(getVariableName())
                 .append(".processResponse(results, status);\n}")
                 .append("});");
-        //System.out.println("direct call: " + r.toString());
+//        System.out.println("direct call: " + r.toString());
+//        Alert alert = new Alert(AlertType.INFORMATION);
+//        alert.setContentText(r.toString());
+//        alert.show();
+//
+//        alert.showAndWait();
+        
         LOG.trace("Directions direct call: " + r.toString());
         try{
             getJSObject().eval(r.toString());
@@ -61,8 +75,9 @@ public class DirectionsService extends JavascriptObject{
             LOG.error(t.getMessage());
         }
     }
-    
+//    int cont=0;
      public void processResponse(Object results, Object status) {
+//    	 cont++;
         LOG.trace("STATUS: {}",status);
         DirectionStatus pStatus = DirectionStatus.UNKNOWN_ERROR;
         if (status instanceof String && results instanceof JSObject) {
@@ -73,6 +88,12 @@ public class DirectionsService extends JavascriptObject{
                 callback.directionsReceived(ers, pStatus);
                 return;
             }
+        }else if(DirectionStatus.OVER_QUERY_LIMIT.equals(DirectionStatus.valueOf((String) status))){
+        	pStatus = DirectionStatus.valueOf((String) status);
+            LOG.trace("\n\nResults: " + results);
+            DirectionsResult ers = new DirectionsResult((JSObject) results);
+            callback.directionsReceived(ers, pStatus);
+            return;
         }
         callback.directionsReceived(new DirectionsResult(), pStatus);
     }

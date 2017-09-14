@@ -7,12 +7,16 @@ import com.lynden.gmapsfx.MapComponentInitializedListener;
 import com.lynden.gmapsfx.javascript.object.*;
 import com.lynden.gmapsfx.service.directions.*;
 
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CountDownLatch;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -32,6 +36,12 @@ import com.goldtek.main.routeguide.ColorfulDepot.ListViewID;
 import com.goldtek.algorithm.*;
 import com.goldtek.database.DbManager;
 import com.goldtek.database.IDbCallback;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.util.Duration;
+import javax.swing.Timer;
+import javafx.application.Platform;
+
 
 public class MainFXMLController
 		implements Initializable, MapComponentInitializedListener, DirectionsServiceCallback {
@@ -48,6 +58,13 @@ public class MainFXMLController
 	protected List<Route> mSaveRoutes = new ArrayList<>();
 	protected List<Cost> mCostRoutes = new ArrayList<>();
 	protected IVrpSolver mSolver = JspritSolver.getInstance();
+	protected List<Depot> StartEndPoint = new ArrayList<>();
+	protected List<Route> RoutePoint = new ArrayList<>();
+	protected DirectionsRequest request = null;
+	protected DirectionsWaypoint[] wayPoints = null;
+	protected Timer timer;
+	protected int Routesize = 0;
+	
 
 	@FXML protected BorderPane RootPane;
 	@FXML protected GoogleMapView MapView;
@@ -69,8 +86,15 @@ public class MainFXMLController
 			dialog.show();
 			break;
 	     case "MenuStart":
+	    	 StartEndPoint.clear();
+	    	 RoutePoint.clear();
+	    	 delayFactor = 0;
+	    	 j = 9;
 	         String inputPath = VrpMaker.OUTPUT;
 	         clearAll();
+	         //+++++
+//	         cont = 0;
+	         //-----
 	         
 	         if (!FileHandle.getInstance().isExists(inputPath)) {
 	             File file = FileHandle.getInstance().showXMLChooser(RootPane.getScene().getWindow());
@@ -160,9 +184,36 @@ public class MainFXMLController
 			}
 		}
 	}
-
+	
+	int delayFactor = 0;
+	int j = 9;
 	@Override
 	public void directionsReceived(DirectionsResult results, DirectionStatus status) {
+//		delayFactor++;
+//		System.out.println(delayFactor+"=>"+status.toString());
+		if(status.equals(DirectionStatus.OK)){
+//			delayFactor++;
+		}else if(status.equals(DirectionStatus.OVER_QUERY_LIMIT)){
+			 final Runnable update = new Runnable() {
+			       @Override 
+			       public void run() {
+			    	   j++;
+			    	   drawDriections(StartEndPoint.get(j),StartEndPoint.get(j),RoutePoint.get(j));
+			    	   delayFactor++;
+			        }
+			    };
+
+			   ActionListener delayedAction = new ActionListener(){
+			     @Override
+			     public void actionPerformed(java.awt.event.ActionEvent arg0) {
+			       Platform.runLater(update);
+			     }
+			   };
+			   delayFactor++;
+			   timer = new Timer(delayFactor*1250, delayedAction);
+			   timer.setRepeats(false);
+			   timer.start();
+		}
 	}
 
 	@Override
@@ -190,6 +241,7 @@ public class MainFXMLController
 				drawDriections(solver.getCenter(index), solver.getCenter(index), route);
 				RouteLabel.getInstance().setDriver(index, route.getDriver());
 				mMenuButtonText.add(String.format("%s - %s", RouteLabel.getInstance().get(index), RouteLabel.getInstance().getDriver(index)));
+				Routesize = routes.size();
 			}
 
             mCurrentRouteGuide.clear();
@@ -217,12 +269,16 @@ public class MainFXMLController
         mGMapLineList.clear(); // clear any route markers
         mCurrentRouteGuide.clear();
     }
-	   
+	
 	private void drawDriections(Depot start, Depot end, Route route) {
+		StartEndPoint.add(start);
+		RoutePoint.add(route);
+		
+		
         GMapLine LineMarkers = new GMapLine();
-        DirectionsRequest request = null;
-        DirectionsWaypoint[] wayPoints = null;
-        MarkerOptions markerOptions = new MarkerOptions();
+//        DirectionsRequest request = null;
+//        DirectionsWaypoint[] wayPoints = null;
+        MarkerOptions markerOptions = new MarkerOptions();        
 
         if (route != null) {
             wayPoints = new DirectionsWaypoint[route.getDepots().size()];
@@ -238,8 +294,9 @@ public class MainFXMLController
                 MapView.getMap().addMarker(marker);
                 LineMarkers.saveLineMarkers(marker); // add markers one Line
             }
-
+            
             mGMapLineList.add(LineMarkers); // save any route markers
+            
             request = new DirectionsRequest(start.toLatLongString(), end.toLatLongString(), TravelModes.DRIVING,
                     wayPoints);
         } else {
@@ -247,13 +304,16 @@ public class MainFXMLController
         }
         // Add are Start & End markers on the map+++
         markerOptions.position(new LatLong(start.getLatitude(), start.getLongitude()))
-                .icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png");
+                .icon("http://maps.google.com/mapfiles/kml/pal3/icon21.png")
+                .label("M");
         Marker marker = new Marker(markerOptions);
         MapView.getMap().addMarker(marker);
 
         DirectionsRenderer directionsRenderer = new DirectionsRenderer(false, MapView.getMap(), mDirectionsPane, RouteColor.getInstance().get(route.getId()));
         mDirectionsService.getRoute(request, this, directionsRenderer);
+                
         LineMarkers.saveRoute(directionsRenderer);
+        
 
         LineMarkers.setVisible(true);
     }
@@ -287,31 +347,79 @@ public class MainFXMLController
         ColorfulDepot enddepot = new ColorfulDepot(index, mSolver.getCenter(index), ListViewID.END);
         mCurrentRouteGuide.add(enddepot);
     }
-
+    
     private void MenuButton_ShowRoute(int index) {
-        for (int i = 0; i < mGMapLineList.size(); i++) {
+        for (int i = 0; i < Routesize; i++) {
             if (i == index) {
-                if (mGMapLineList.get(i).getVisible() == false) {
-                    DirectionsRenderer render = mGMapLineList.get(i).getRoute();
-                    render.setMap(MapView.getMap()); // show lines
-
-                    List<Marker> marker = mGMapLineList.get(i).getMarker();
-                    for (Marker markers : marker) {
-                        MapView.getMap().addMarker(markers); // show markers
-                    }
-                    mGMapLineList.get(i).setVisible(true);
-                }
+            	if(index <= 9){
+	                if (mGMapLineList.get(i).getVisible() == false) {
+	                    DirectionsRenderer render = mGMapLineList.get(i).getRoute();
+	                    render.setMap(MapView.getMap()); // show lines
+	
+	                    List<Marker> marker = mGMapLineList.get(i).getMarker();
+	                    for (Marker markers : marker) {
+	                        MapView.getMap().addMarker(markers); // show markers
+	                    }
+	                    mGMapLineList.get(i).setVisible(true);
+	                }
+            	}else{
+	                  if (mGMapLineList.get(Routesize-10+i).getVisible() == false) {
+	                  DirectionsRenderer render = mGMapLineList.get(Routesize-10+i).getRoute();
+	                  render.setMap(MapView.getMap()); // show lines
+	
+	                  List<Marker> marker = mGMapLineList.get(Routesize-10+i).getMarker();
+	                  for (Marker markers : marker) {
+	                      MapView.getMap().addMarker(markers); // show markers
+	                  }
+	                  mGMapLineList.get(Routesize-10+i).setVisible(true);
+	                  }
+            	}
             } else {
-                if (mGMapLineList.get(i).getVisible() == true) {
-                    DirectionsRenderer render = mGMapLineList.get(i).getRoute();
-                    render.clearDirections(); // hide lines
-
-                    List<Marker> marker = mGMapLineList.get(i).getMarker();
-                    for (Marker markers : marker) {
-                        MapView.getMap().removeMarker(markers); // hide markers
-                    }
-                    mGMapLineList.get(i).setVisible(false);
-                }
+            	if(index <= 9){
+	                if (mGMapLineList.get(i).getVisible() == true) {
+	                    DirectionsRenderer render = mGMapLineList.get(i).getRoute();
+	                    render.clearDirections(); // hide lines
+	
+	                    List<Marker> marker = mGMapLineList.get(i).getMarker();
+	                    for (Marker markers : marker) {
+	                        MapView.getMap().removeMarker(markers); // hide markers
+	                    }
+	                    mGMapLineList.get(i).setVisible(false);
+	                }
+	                if (mGMapLineList.get(Routesize-10+i).getVisible() == true) {
+	                    DirectionsRenderer render = mGMapLineList.get(Routesize-10+i).getRoute();
+	                    render.clearDirections(); // hide lines
+	
+	                    List<Marker> marker = mGMapLineList.get(Routesize-10+i).getMarker();
+	                    for (Marker markers : marker) {
+	                        MapView.getMap().removeMarker(markers); // hide markers
+	                    }
+	                    mGMapLineList.get(Routesize-10+i).setVisible(false);
+	                }
+	                
+            	}else{
+            		int z = Routesize-10+i;
+	                if (mGMapLineList.get(Routesize-10+i).getVisible() == true) {
+	                    DirectionsRenderer render = mGMapLineList.get(Routesize-10+i).getRoute();
+	                    render.clearDirections(); // hide lines
+	
+	                    List<Marker> marker = mGMapLineList.get(Routesize-10+i).getMarker();
+	                    for (Marker markers : marker) {
+	                        MapView.getMap().removeMarker(markers); // hide markers
+	                    }
+	                    mGMapLineList.get(Routesize-10+i).setVisible(false);
+	                }
+	                if (mGMapLineList.get(i).getVisible() == true) {
+	                    DirectionsRenderer render = mGMapLineList.get(i).getRoute();
+	                    render.clearDirections(); // hide lines
+	
+	                    List<Marker> marker = mGMapLineList.get(i).getMarker();
+	                    for (Marker markers : marker) {
+	                        MapView.getMap().removeMarker(markers); // hide markers
+	                    }
+	                    mGMapLineList.get(i).setVisible(false);
+	                }
+            	}
             }
         }
     }

@@ -9,22 +9,29 @@ public class RouteLabel {
     public static RouteLabel getInstance() { return sInstance; }
     
     private RouteLabel() {
-        for (char c = 'A'; c <= 'Z'; c++)
+        for (char c = 'A'; c <= 'Z'; c++){
             ascii.add (String.valueOf (c));
+        }
     }
     
-    private List<String> ascii = new ArrayList <String> (26);
+    private List<String> ascii = new ArrayList <String> (52);
     private List<String> drivers = new ArrayList<>();
     
     public String get(int index) {
         if (index < 0) index = 0;
-        else if (index >= ascii.size()) index = index % ascii.size();
+        else if(index >=26){
+        	return ascii.get(index-26)+ascii.get(index-26);
+        }
+//        else if (index >= ascii.size()) index = index % ascii.size();
         return ascii.get(index);
     }
     
     public String getLabel(int index, int order) {
         if (index < 0) index = 0;
-        else if (index >= ascii.size()) index = index % ascii.size();
+        else if(index >=26){
+        	return ascii.get(index-26)+ascii.get(index-26)+order;
+        }
+//        else if (index >= ascii.size()) index = index % ascii.size();
         return ascii.get(index) + order;
     }
     

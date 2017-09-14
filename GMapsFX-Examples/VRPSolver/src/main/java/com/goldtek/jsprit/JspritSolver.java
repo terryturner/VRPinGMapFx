@@ -207,7 +207,6 @@ public class JspritSolver implements IVrpSolver {
                     }
     			}
     		}
-    		System.out.println("route size: " + showRoute.getDepots().size());
     		mShowRoutes.add(showRoute);
     	}
     	
