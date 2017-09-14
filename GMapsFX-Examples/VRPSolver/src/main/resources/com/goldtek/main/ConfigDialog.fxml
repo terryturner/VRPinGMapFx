@@ -12,7 +12,7 @@
    <children>
 
       <Separator />
-      <TitledPane fx:id="VehiclePane" animated="false" expanded="false" text="Vehicle List">
+      <TitledPane fx:id="VehiclePane" animated="false" expanded="false" text="派遣車輛">
          <content>
             <VBox>
                <children>
@@ -54,7 +54,7 @@
          </content>
       </TitledPane>
       <Separator />
-      <TitledPane fx:id="ServicePane" animated="false" expanded="true" text="Service List">
+      <TitledPane fx:id="ServicePane" animated="false" expanded="true" text="長途郵寄">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0">
                <children>
@@ -103,7 +103,7 @@
         </content>
       </TitledPane>
       <Separator />
-      <TitledPane fx:id="ShipmentPane" animated="false" expanded="false" text="Shipment List">
+      <TitledPane fx:id="ShipmentPane" animated="false" expanded="false" text="短程快遞">
          <content>
             <VBox minHeight="0.0" minWidth="0.0">
                <children>

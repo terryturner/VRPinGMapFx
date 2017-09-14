@@ -38,23 +38,27 @@ public class RouteGuidItem extends ListCell<ColorfulDepot> {
 			switch (colorDepot.getListViewID()) {
 			case START:
 			    Line1.setText(String.format("%s車起始點 - %s", label, driver));
-				Line2.setText("取貨 " + colorDepot.getDepot().getPickupCapacity() + "件");
+				Line2.setText("從集貨中心 裝載 " + colorDepot.getDepot().getPickupCapacity() + "件");
 				Line3.setText("");
 				break;
 			case WAYPOINT:
 				Line1.setText(label + colorDepot.getDepotPoint() + " " + colorDepot.getDepot().getName());
 				
 				String deliverMsg = "送貨 " + colorDepot.getDepot().getDeliverCapacity() + "件";
+//<<<<<<< HEAD
 				if (colorDepot.getDepot().getDropoffShipment() > 0) deliverMsg += ", 直送放貨 " + colorDepot.getDepot().getDropoffShipment() + "件";
+//=======
+//				if (colorDepot.getDepot().getDropoffShipment() > 0) deliverMsg += ", 快遞 " + colorDepot.getDepot().getDropoffShipment() + "件";
+//>>>>>>> 60fde4477c4cbb2187e01a12ec8bf68981d564f1
 				String pickupMsg = "取貨 " + colorDepot.getDepot().getPickupCapacity() + "件";
-				if (colorDepot.getDepot().getPickupShipment() > 0) pickupMsg += ", 直送取貨 " + colorDepot.getDepot().getPickupShipment() + "件";
+				if (colorDepot.getDepot().getPickupShipment() > 0) pickupMsg += ", 快遞 " + colorDepot.getDepot().getPickupShipment() + "件";
 				
 				Line2.setText(deliverMsg);
                 Line3.setText(pickupMsg);
 				break;
 			case END:
 				Line1.setText(label + "車終點");
-                Line2.setText("放貨 " + colorDepot.getDepot().getDeliverCapacity() + "件");
+                Line2.setText("對集貨中心 提交 " + colorDepot.getDepot().getDeliverCapacity() + "件");
                 Line3.setText("");
 				break;
 			default:

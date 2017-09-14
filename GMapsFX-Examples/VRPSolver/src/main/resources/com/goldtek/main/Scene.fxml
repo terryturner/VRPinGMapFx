@@ -22,7 +22,7 @@
     <top>
     	<MenuBar layoutY="-1.0" prefHeight="30.0" prefWidth="${MenuBar.parent.width}">
 	       <menus>
-	           <Menu text="File">
+	           <Menu text="ALG">
 	               <items>
 	                   <MenuItem id="MenuConfig" text="Config" onAction="#handleMenu" />
 	                   <CheckMenuItem fx:id="MenuCostAssist" text="Cost Assist" onAction="#handleMenu" />
